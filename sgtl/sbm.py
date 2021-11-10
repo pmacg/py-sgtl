@@ -122,7 +122,7 @@ def _generate_sbm_edges(cluster_sizes, prob_mat_q, directed=False):
 
 def sbm(cluster_sizes, prob_mat_q, directed=False, self_loops=False):
     """
-    Generate a graph from the stochastic block model.
+    Generate a graph from the general stochastic block model.
 
     The list cluster_sizes gives the number of vertices inside each cluster and the matrix Q gives the probability of
     each edge between pairs of clusters.
@@ -160,7 +160,7 @@ def sbm(cluster_sizes, prob_mat_q, directed=False, self_loops=False):
 
 def sbm_equal_clusters(n, k, prob_mat_q, directed=False):
     """
-    Generate a graph from the general stochastic block model.
+    Generate a graph with equal cluster sizes from the stochastic block model.
 
     Generates a graph with n vertices and k clusters. Every cluster will have floor(n/k) vertices. The probability of
     each edge inside a cluster is given by the probability matrix Q as described in the ``sbm`` method.

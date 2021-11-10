@@ -1,4 +1,4 @@
-sgtl.graph
+﻿sgtl.graph
 ==========
 
 .. automodule:: sgtl.graph
@@ -16,6 +16,8 @@ sgtl.graph
    .. rubric:: Classes
 
    .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
    
       Graph
    

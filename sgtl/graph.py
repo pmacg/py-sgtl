@@ -60,7 +60,10 @@ class Graph(object):
     def laplacian_matrix(self):
         """
         Construct the Laplacian matrix of the graph. The Laplacian matrix is defined to be
-            L = D - A
+
+        .. math::
+           L = D - A
+
         where D is the diagonal degree matrix and A is the adjacency matrix of the graph.
         """
         return self.degree_matrix() - self.adj_mat
@@ -68,15 +71,21 @@ class Graph(object):
     def normalised_laplacian_matrix(self):
         """
         Construct the normalised Laplacian matrix of the graph. The normalised Laplacian matrix is defined to be
-            mathcal{L} = D^{-1/2} L D^{-1/2} =  I - D^{-1/2} A D^{-1/2}
+
+        .. math::
+            \\mathcal{L} = D^{-1/2} L D^{-1/2} =  I - D^{-1/2} A D^{-1/2}
+
         where I is the identity matrix and D is the diagonal degree matrix of the graph.
         """
         return self.inverse_sqrt_degree_matrix() @ self.laplacian_matrix() @ self.inverse_degree_matrix()
 
     def random_walk_laplacian_matrix(self):
         """
-        Construct the normalised Laplacian matrix of the graph. The normalised Laplacian matrix is defined to be
-            L_{RW} = D^{-1} L =  I - D^{-1} A
+        Construct the random walk Laplacian matrix of the graph. The random walk Laplacian matrix is defined to be
+
+        .. math::
+            L_{\\mathrm{RW}} = D^{-1} L =  I - D^{-1} A
+
         where I is the identity matrix and D is the diagonal degree matrix of the graph.
         """
         return self.inverse_degree_matrix() @ self.laplacian_matrix()
@@ -102,7 +111,10 @@ class Graph(object):
         """
         Compute the conductance of the given set of vertices.
         The conductance is defined to be
-            phi(S) = 1 - (2 * w(S, S) / vol(S))
+
+        .. math::
+           \\phi(S) = 1 - \\frac{2 w(S, S)}{vol(S)}
+
         :param vertex_set_s: a collection of vertex indices corresponding to the set S
         :return: The conductance \phi(S)
         """
@@ -112,7 +124,11 @@ class Graph(object):
         """
         Compute the bipartiteness of the two given vertex sets.
         The bipartiteness is defined as
-            beta(L, R) = 1 - (2 w(L, R) / vol(L union R))
+
+        .. math::
+
+           \\beta(L, R) = 1 - \\frac{2 w(L, R)}{vol(L \\cup R)}
+
         :param vertex_set_l: a collection of vertex indices corresponding to the set L
         :param vertex_set_r: a collection of vertex indices corresponding to the set R
         :return: The bipartiteness ratio \beta(L, R)

@@ -1,7 +1,7 @@
-﻿sgtl.clustering
-===============
+﻿sgtl.sbm
+========
 
-.. automodule:: sgtl.clustering
+.. automodule:: sgtl.sbm
 
    
    
@@ -14,7 +14,9 @@
    .. autosummary::
       :toctree:
    
-      spectral_clustering
+      sbm
+      sbm_equal_clusters
+      ssbm
    
    
 

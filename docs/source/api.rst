@@ -3,6 +3,9 @@ API
 
 .. autosummary::
    :toctree: generated
+   :template: custom-module-template.rst
+   :recursive:
 
-   sgtl.Graph
-   sgtl.clustering.spectral_clustering
+   sgtl.graph
+   sgtl.clustering
+   sgtl.sbm

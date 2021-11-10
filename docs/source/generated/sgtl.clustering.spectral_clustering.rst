@@ -1,4 +1,4 @@
-﻿sgtl.clustering.spectral\_clustering
+sgtl.clustering.spectral\_clustering
 ====================================
 
 .. currentmodule:: sgtl.clustering
