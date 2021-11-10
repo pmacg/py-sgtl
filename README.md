@@ -1,4 +1,7 @@
-# py-sgtl
+# SGTL - Spectral Graph Theory Library
+
+[![Documentation Status](https://readthedocs.org/projects/sgtl/badge/?version=latest)](https://sgtl.readthedocs.io/en/latest/?badge=latest)
+
 SGTL is a python library of spectral graph theory methods. The library is still very new and so
 there are many features and algorithms missing.
 
