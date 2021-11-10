@@ -43,7 +43,7 @@ class Graph(object):
 
         # Store the number of edges and vertices in the graph.
         self.num_vertices = self.adj_mat.shape[0]
-        self.num_edges = sum(self.degrees) / 2
+        self.num_edges = round(sum(self.degrees) / 2)
 
     def degree_matrix(self):
         """Construct the diagonal degree matrix of the graph."""
