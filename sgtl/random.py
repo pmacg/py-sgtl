@@ -1,5 +1,7 @@
 """
-Provides methods for generating graphs from the stochastic block model.
+Provides methods for generating random graphs.
+
+Includes methods for generating Erdos-Renyi graphs and graphs from the stochastic block model.
 """
 import random
 import scipy.sparse
@@ -216,3 +218,17 @@ def ssbm(n, k, p, q, directed=False):
 
     # Call the general sbm method.
     return sbm(cluster_sizes, prob_mat_q, directed=directed)
+
+
+def erdos_renyi(n, p):
+    """
+    Generate a random graph from the Erdos-Renyi model.
+
+    :math:`G(n, p)` is a random graph on :math:`n` vertices such that for any pair of vertices :math:`u` and :math:`v`
+    the edge :math:`(u, v)` is included with probability :math:`p`.
+
+    :param n: The number of vertices in the graph.
+    :param p: The probability of an edge between each pair of vertices.
+    :return: The generated graph as an ``sgtl.Graph`` object.
+    """
+    return ssbm(n, 1, p, p)

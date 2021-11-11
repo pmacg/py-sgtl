@@ -2,3 +2,4 @@ scipy
 sklearn
 pytest
 furo
+numpy

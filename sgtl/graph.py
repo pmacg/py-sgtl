@@ -3,6 +3,7 @@ Provides the Graph object, which is our core representation of a graph within th
 """
 import scipy as sp
 import scipy.sparse
+import numpy as np
 import math
 
 
@@ -118,7 +119,7 @@ class Graph(object):
            \\phi(S) = 1 - \\frac{2 w(S, S)}{vol(S)}
 
         :param vertex_set_s: a collection of vertex indices corresponding to the set S
-        :return: The conductance \phi(S)
+        :return: The conductance :math:`\\phi(S)`
         """
         return 1 - (2 * self.weight(vertex_set_s, vertex_set_s)) / self.volume(vertex_set_s)
 
@@ -136,3 +137,116 @@ class Graph(object):
         :return: The bipartiteness ratio \beta(L, R)
         """
         return 1 - 2 * self.weight(vertex_set_l, vertex_set_r) / self.volume(vertex_set_l + vertex_set_r)
+
+
+def complete_graph(n: int) -> Graph:
+    """
+    Construct the complete unweighted graph on :math:`n` vertices.
+
+    :param n: The number of vertices in the graph.
+    :return: The complete graph on :math:`n` vertices, as a `Graph` object.
+    :raises ValueError: if the number of vertices is not a positive integer.
+
+    :Example:
+
+       >>> import sgtl.graph
+       >>> graph = sgtl.graph.complete_graph(4)
+       >>> graph.adj_mat.toarray()
+       array([[0., 1., 1., 1.],
+              [1., 0., 1., 1.],
+              [1., 1., 0., 1.],
+              [1., 1., 1., 0.]])
+
+    """
+    if n <= 0:
+        raise ValueError("The graph must contain at least one vertex.")
+
+    # Generate the complete adjacency matrix - we generate a dense matrix first
+    adj_mat = sp.sparse.csr_matrix(np.ones((n, n)) - np.eye(n))
+    return Graph(adj_mat)
+
+
+def cycle_graph(n: int) -> Graph:
+    """
+    Construct the unweighted cycle graph on :math:`n` vertices.
+
+    :param n: The number of vertices in the graph
+    :return: The cycle graph on :math:`n` vertices, as a `Graph` object.
+    :raises ValueError: if the number of vertices is not a positive integer.
+
+    :Example:
+
+       >>> import sgtl.graph
+       >>> graph = sgtl.graph.cycle_graph(5)
+       >>> graph.adj_mat.toarray()
+       array([[0., 1., 0., 0., 1.],
+              [1., 0., 1., 0., 0.],
+              [0., 1., 0., 1., 0.],
+              [0., 0., 1., 0., 1.],
+              [1., 0., 0., 1., 0.]])
+
+    """
+    if n <= 0:
+        raise ValueError("The graph must contain at least one vertex.")
+
+    # Generate the cycle graph adjacency matrix
+    adj_mat = sp.sparse.diags([np.ones(n-1), np.ones(n-1), np.ones(1), np.ones(1)], [-1, 1, (n-1), (1-n)])
+    return Graph(adj_mat)
+
+
+def star_graph(n: int) -> Graph:
+    """
+    Construct the unweighted star graph on :math:`n` vertices.
+
+    :param n: The number of vertices in the graph
+    :return: The star graph on :math:`n` vertices, as a `Graph` object.
+    :raises ValueError: if the number of vertices is not a positive integer.
+
+    :Example:
+
+       >>> import sgtl.graph
+       >>> graph = sgtl.graph.star_graph(4)
+       >>> graph.adj_mat.toarray()
+       array([[0., 1., 1., 1.],
+              [1., 0., 0., 0.],
+              [1., 0., 0., 0.],
+              [1., 0., 0., 0.]])
+
+    """
+    if n <= 0:
+        raise ValueError("The graph must contain at least one vertex.")
+
+    # Generate the cycle graph adjacency matrix
+    adj_mat = sp.sparse.lil_matrix((n, n))
+    for i in range(1, n):
+        adj_mat[0, i] = 1
+        adj_mat[i, 0] = 1
+    return Graph(adj_mat)
+
+
+def path_graph(n: int) -> Graph:
+    """
+    Construct the unweighted path graph on :math:`n` vertices.
+
+    :param n: The number of vertices in the graph
+    :return: The path graph on :math:`n` vertices, as a `Graph` object.
+    :raises ValueError: if the number of vertices is not a positive integer.
+
+    :Example:
+
+       >>> import sgtl.graph
+       >>> graph = sgtl.graph.path_graph(5)
+       >>> graph.adj_mat.toarray()
+       array([[0., 1., 0., 0., 0.],
+              [1., 0., 1., 0., 0.],
+              [0., 1., 0., 1., 0.],
+              [0., 0., 1., 0., 1.],
+              [0., 0., 0., 1., 0.]])
+
+    """
+    if n <= 0:
+        raise ValueError("The graph must contain at least one vertex.")
+
+    # Generate the cycle graph adjacency matrix
+    adj_mat = sp.sparse.diags([np.ones(n-1), np.ones(n-1)], [-1, 1])
+    return Graph(adj_mat)
