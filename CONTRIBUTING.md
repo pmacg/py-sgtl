@@ -27,6 +27,7 @@ Please follow this checklist
 * Run the `check.sh` script to run all tests and check they pass.
 * Check the documentation is built correctly - check changelog
 * Push the release branch to github.
+* Remove previously built distributions with `rm dist/*`.
 * Build the python package with `python3 setup.py sdist bdist_wheel`.
 * Upload the package with `twine upload dist/*`.
 * Merge the release branch to the `main` branch.
