@@ -1,7 +1,7 @@
-﻿sgtl.sbm
-========
+﻿sgtl.random
+===========
 
-.. automodule:: sgtl.sbm
+.. automodule:: sgtl.random
 
    
    
@@ -14,6 +14,7 @@
    .. autosummary::
       :toctree:
    
+      erdos_renyi
       sbm
       sbm_equal_clusters
       ssbm

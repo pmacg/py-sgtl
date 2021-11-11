@@ -8,4 +8,4 @@ API
 
    sgtl.graph
    sgtl.clustering
-   sgtl.sbm
+   sgtl.random
