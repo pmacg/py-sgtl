@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+Fixed
+~~~~~
+* The `ssbm` method will not allow non-float probabilities
+
 0.3 - 2021-11-11
 ----------------
 

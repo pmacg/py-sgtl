@@ -1,6 +1,7 @@
 """
 Tests for the random module.
 """
+import pytest
 import scipy.sparse
 from context import sgtl
 import sgtl.random
@@ -43,6 +44,16 @@ def test_sbm():
     # And in a single cluster should be about
     # (n/4) * (n/4) * p
     assert abs((graph.weight(list(range(500)), list(range(500))) / (int(((n/4) * ((n/4) - 1)) / 2) + (n/4))) - 1) <= 0.1
+
+
+def test_ssbm():
+    # Make sure that ssbm does not allow you to pass an array of probabilities.
+    with pytest.raises(TypeError):
+        q = [[0.4, 0.1, 0.1, 0.1], [0.1, 0.4, 0.1, 0.1], [0.1, 0.1, 0.4, 0.1], [0.1, 0.1, 0.1, 0.4]]
+        _ = sgtl.random.ssbm(1000, 4, 0.1, q)
+
+    # We should be able to pass the value 0 to the ssbm function
+    _ = sgtl.random.ssbm(1000, 4, 0.1, 0)
 
 
 def test_erdos_renyi():

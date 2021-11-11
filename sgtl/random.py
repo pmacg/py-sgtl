@@ -51,7 +51,7 @@ def _get_number_of_edges(c1_size, c2_size, prob, same_cluster, self_loops, direc
     :param c2_size: The size of the second cluster
     :param prob: The probability of an edge between the clusters
     :param same_cluster: Whether these are the same cluster
-    :param self_loops: Whether we will generate self loops
+    :param self_loops: Whether we will generate self loop
     :param directed: Whether we are generating a directed graph
     :return: the number of edges to generate between these clusters
     """
@@ -192,7 +192,7 @@ def sbm_equal_clusters(n, k, prob_mat_q, directed=False):
     return sbm([int(n/k)] * k, prob_mat_q, directed=directed)
 
 
-def ssbm(n, k, p, q, directed=False):
+def ssbm(n: int, k: int, p: float, q: float, directed=False):
     """
     Generate a graph from the symmetric stochastic block model.
 
@@ -206,6 +206,13 @@ def ssbm(n, k, p, q, directed=False):
     :param directed: Whether to generate a directed graph.
     :return: The generated graph as an ``sgtl.Graph`` object.
     """
+    # Make sure that the value q is an integer or float
+    try:
+        p = float(p)
+        q = float(q)
+    except Exception:
+        raise TypeError("The probabilities p and q must be numbers between 0 and 1.")
+
     # Every cluster has the same size.
     cluster_sizes = [int(n/k)] * k
 
