@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.3'
+VERSION = '0.3.1'
 DESCRIPTION = 'SGTL - Spectral Graph Theory Library'
 LONG_DESCRIPTION =\
     "This library provides several methods and algorithms relating to spectral graph theory in python.\n\n" \
@@ -16,6 +16,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     packages=find_packages(),
     install_requires=["numpy", "scipy", "sklearn"],
+    long_description_content_type='text/markdown',
 
     keywords=['python', 'spectral', 'graph', 'algorithms', 'clustering', 'cheeger'],
     classifiers=[
