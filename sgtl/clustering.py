@@ -15,6 +15,8 @@ def spectral_clustering(graph, num_clusters, num_eigenvectors=None):
     :param num_clusters: the number of clusters to find
     :param num_eigenvectors: (optional) the number of eigenvectors to use to find the clusters
     :return: A list of lists. Each list corresponds to the indices of the vertex in that cluster.
+
+    :raises ValueError: if the requested number of clusters or eigenvectors are not a positive integer
     """
     # If the number of eigenvectors is not specified, use the same number as the number of clusters we are looking for.
     if num_eigenvectors is None:
