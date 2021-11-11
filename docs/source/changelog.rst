@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.3 - 2021-11-11
+----------------
+
+Changed
+~~~~~~~
+* Changed the name of the `sbm` module to `random`.
+
+Added
+~~~~~
+* Generate standard graphs: complete, cycle, path, star.
+* Generate Erdos-Renyi graphs
+
+Fixed
+~~~~~
+* Spectral clustering checks that number of clusters and eigenvectors are positive integers.
+
 0.2 - 2021-11-10
 ----------------
 

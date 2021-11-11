@@ -15,10 +15,20 @@ def spectral_clustering(graph, num_clusters, num_eigenvectors=None):
     :param num_clusters: the number of clusters to find
     :param num_eigenvectors: (optional) the number of eigenvectors to use to find the clusters
     :return: A list of lists. Each list corresponds to the indices of the vertex in that cluster.
+
+    :raises ValueError: if the requested number of clusters or eigenvectors are not a positive integer
     """
     # If the number of eigenvectors is not specified, use the same number as the number of clusters we are looking for.
-    if not num_eigenvectors:
+    if num_eigenvectors is None:
         num_eigenvectors = num_clusters
+
+    # If the number of eigenvectors, or the number of clusters is 0, we should raise an error
+    if num_eigenvectors <= 0:
+        raise ValueError("You must use more than 0 eigenvectors for spectral clustering.")
+    if num_clusters <= 0:
+        raise ValueError("You must find at least 1 cluster when using spectral clustering.")
+    if type(num_clusters) is not int or type(num_eigenvectors) is not int:
+        raise TypeError("The number of clusters and eigenvectors must be positive integers.")
 
     # Get the normalised laplacian matrix of the graph
     laplacian_matrix = graph.normalised_laplacian_matrix()

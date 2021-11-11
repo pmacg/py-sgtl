@@ -1,5 +1,7 @@
 """
-Provides methods for generating graphs from the stochastic block model.
+Provides methods for generating random graphs.
+
+Includes methods for generating Erdos-Renyi graphs and graphs from the stochastic block model.
 """
 import random
 import scipy.sparse
@@ -150,13 +152,13 @@ def sbm(cluster_sizes, prob_mat_q, directed=False, self_loops=False):
 
     .. code-block:: python
 
-       import sgtl.sbm
+       import sgtl.random
        cluster_sizes = [20, 50, 100, 200]
        Q = [[0.6, 0.1, 0.1, 0.3], [0.1, 0.5, 0.2, 0.1], [0.1, 0.2, 0.7, 0.2], [0.3, 0.1, 0.2, 0.5]]
-       graph = sgtl.sbm.sbm(cluster_sizes, Q)
+       graph = sgtl.random.sbm(cluster_sizes, Q)
 
     For convenience, in the common case when every cluster has the same size or the internal and external probabilities
-    are all the same, you can instead use :doc:`sgtl.sbm.sbm_equal_clusters` or :doc:`sgtl.sbm.ssbm`.
+    are all the same, you can instead use :doc:`sgtl.random.sbm_equal_clusters` or :doc:`sgtl.random.ssbm`.
     """
     # Initialize the adjacency matrix
     adj_mat = scipy.sparse.lil_matrix((sum(cluster_sizes), sum(cluster_sizes)))
@@ -216,3 +218,17 @@ def ssbm(n, k, p, q, directed=False):
 
     # Call the general sbm method.
     return sbm(cluster_sizes, prob_mat_q, directed=directed)
+
+
+def erdos_renyi(n, p):
+    """
+    Generate a random graph from the Erdos-Renyi model.
+
+    :math:`G(n, p)` is a random graph on :math:`n` vertices such that for any pair of vertices :math:`u` and :math:`v`
+    the edge :math:`(u, v)` is included with probability :math:`p`.
+
+    :param n: The number of vertices in the graph.
+    :param p: The probability of an edge between each pair of vertices.
+    :return: The generated graph as an ``sgtl.Graph`` object.
+    """
+    return ssbm(n, 1, p, p)

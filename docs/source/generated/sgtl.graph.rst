@@ -9,6 +9,16 @@
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      complete_graph
+      cycle_graph
+      path_graph
+      star_graph
+   
    
 
    
