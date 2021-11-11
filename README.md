@@ -11,6 +11,7 @@ You can install the library with `pip install sgtl`.
 * Lightweight and flexible graph object which can be extended as needed.
 * Graph matrices including the Laplacian and Normalised Laplacian
 * Spectral clustering method
+* Generate graphs from the stochastic block model
 
 ## Documentation
 The full documentation is available [here](https://sgtl.readthedocs.io/en/latest/).
