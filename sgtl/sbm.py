@@ -127,20 +127,36 @@ def sbm(cluster_sizes, prob_mat_q, directed=False, self_loops=False):
     The list cluster_sizes gives the number of vertices inside each cluster and the matrix Q gives the probability of
     each edge between pairs of clusters.
 
-    For two vertices u and v where u is in cluster i and v is in cluster j, there is an edge between u and v with
-    probability Q_{i, j}.
+    For two vertices :math:`u` and :math:`v` where :math:`u` is in cluster :math:`i` and :math:`v` is in cluster
+    :math:`j`, there is an edge between :math:`u` and :math:`v` with probability :math:`Q_{i, j}`.
 
-    For the undirected case, we assume that the matrix Q is symmetric (and in practice look only at the upper triangle).
-    For the directed case, we generate edges (u, v) and (v, u) with probabilities Q_{i, j} and Q_{j, i} respectively.
+    For the undirected case, we assume that the matrix :math:`Q` is symmetric (and in practice look only at the upper
+    triangle). For the directed case, we generate edges :math:`(u, v)` and :math:`(v, u)` with probabilities
+    :math:`Q_{i, j}` and :math:`Q_{j, i}` respectively.
 
-    Returns an ``sgtl.Graph`` object.
+    Returns an :doc:`sgtl.graph.Graph` object.
 
     :param cluster_sizes: The number of vertices in each cluster.
-    :param prob_mat_q: A square matrix where Q_{i, j} is the probability of each edge between clusters i and j. Should
-                       be symmetric in the undirected case.
+    :param prob_mat_q: A square matrix where :math:`Q_{i, j}` is the probability of each edge between clusters
+                       :math:`i` and :math:`j`. Should be symmetric in the undirected case.
     :param directed: Whether to generate a directed graph (default is false).
     :param self_loops: Whether to generate self-loops (default is false).
-    :return: The generated graph as an ``sgtl.Graph`` object.
+    :return: The generated graph as an :doc:`sgtl.graph.Graph` object.
+
+    :Example:
+
+    To generate a graph with 4 clusters of different sizes, and a custom probability matrix :math:`Q`, you can use
+    the following:
+
+    .. code-block:: python
+
+       import sgtl.sbm
+       cluster_sizes = [20, 50, 100, 200]
+       Q = [[0.6, 0.1, 0.1, 0.3], [0.1, 0.5, 0.2, 0.1], [0.1, 0.2, 0.7, 0.2], [0.3, 0.1, 0.2, 0.5]]
+       graph = sgtl.sbm.sbm(cluster_sizes, Q)
+
+    For convenience, in the common case when every cluster has the same size or the internal and external probabilities
+    are all the same, you can instead use :doc:`sgtl.sbm.sbm_equal_clusters` or :doc:`sgtl.sbm.ssbm`.
     """
     # Initialize the adjacency matrix
     adj_mat = scipy.sparse.lil_matrix((sum(cluster_sizes), sum(cluster_sizes)))

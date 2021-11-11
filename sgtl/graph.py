@@ -93,6 +93,7 @@ class Graph(object):
     def volume(self, vertex_set):
         """
         Given a set of vertices, compute the volume of the set.
+
         :param vertex_set: an iterable collection of vertex indices
         :return: The volume of vertex_set
         """
@@ -101,6 +102,7 @@ class Graph(object):
     def weight(self, vertex_set_l, vertex_set_r):
         """
         Compute the weight of all edges between the two given vertex sets.
+
         :param vertex_set_l: a collection of vertex indices corresponding to the set L
         :param vertex_set_r: a collection of vertex indices corresponding to the set R
         :return: The weight w(L, R)
