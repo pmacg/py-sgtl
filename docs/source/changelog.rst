@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+Fixed
+~~~~~
+* Spectral clustering checks that number of clusters and eigenvectors are positive integers.
+
 0.2 - 2021-11-10
 ----------------
 
