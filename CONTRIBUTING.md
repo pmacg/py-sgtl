@@ -25,6 +25,7 @@ Please follow this checklist
 * Update the version number of the release in `conf.py` for the documentation and `setup.py` for PyPI.
 * Update the `changelog.rst` file with the name and date of the release.
 * Run the `check.sh` script to run all tests and check they pass.
+* Push the release branch to github.
 * Build the python package with `python3 setup.py sdist bdist_wheel`.
 * Upload the package with `twine upload dist/*`.
 * Merge the release branch to the `main` branch.

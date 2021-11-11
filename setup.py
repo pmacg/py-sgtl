@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.2'
+VERSION = '0.3'
 DESCRIPTION = 'SGTL - Spectral Graph Theory Library'
 LONG_DESCRIPTION =\
-    "This library provides several methods and algorithms relating to spectral graph theory in python."
+    "This library provides several methods and algorithms relating to spectral graph theory in python.\n\n" \
+    "Documentation is available [here](https://sgtl.readthedocs.io/en/latest/)."
 
 # Setting up
 setup(
