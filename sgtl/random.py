@@ -99,21 +99,30 @@ def _generate_sbm_edges(cluster_sizes, prob_mat_q, directed=False):
             second_clusters = range(cluster_1, len(cluster_sizes))
 
         for cluster_2 in second_clusters:
-            # Compute the number of edges between these two clusters
-            num_edges = _get_number_of_edges(cluster_sizes[cluster_1],
-                                             cluster_sizes[cluster_2],
-                                             prob_mat_q[cluster_1][cluster_2],
-                                             cluster_1 == cluster_2,
-                                             True,
-                                             directed)
+            if cluster_2 == cluster_1:
+                # If the clusters are the same, we will iterate through each vertex
+                for v in range(c1_base_index, c1_base_index + cluster_sizes[cluster_1]):
+                    # Get the number of edges leaving this vertex
+                    num_edges = np.random.binomial(cluster_sizes[cluster_1] - (v - c1_base_index),
+                                                   prob_mat_q[cluster_1][cluster_2])
+                    # Sample this number of edges and yield them
+                    for u in random.sample(range(v, c1_base_index + cluster_sizes[cluster_1]), num_edges):
+                        yield v, u
+            else:
+                # Compute the number of edges between these two clusters
+                num_edges = _get_number_of_edges(cluster_sizes[cluster_1],
+                                                 cluster_sizes[cluster_2],
+                                                 prob_mat_q[cluster_1][cluster_2],
+                                                 cluster_1 == cluster_2,
+                                                 True,
+                                                 directed)
 
-            # Sample this number of edges. TODO: correct for possible double-sampling of edges
-            num_possible_edges = (cluster_sizes[cluster_1] * cluster_sizes[cluster_2]) - 1
-            for i in range(num_edges):
-                edge_idx = random.randint(0, num_possible_edges)
-                u = c1_base_index + int(edge_idx / cluster_sizes[cluster_1])
-                v = c2_base_index + (edge_idx % cluster_sizes[cluster_1])
-                yield u, v
+                # Sample this number of edges.
+                num_possible_edges = (cluster_sizes[cluster_1] * cluster_sizes[cluster_2]) - 1
+                for edge_idx in random.sample(range(num_possible_edges), num_edges):
+                    u = c1_base_index + int(edge_idx / cluster_sizes[cluster_1])
+                    v = c2_base_index + (edge_idx % cluster_sizes[cluster_1])
+                    yield u, v
 
             # Update the base index for the second cluster
             c2_base_index += cluster_sizes[cluster_2]

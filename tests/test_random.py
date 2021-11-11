@@ -12,6 +12,14 @@ def test_num_pos_edges():
     assert sgtl.random._get_num_pos_edges(n, n, True, True, False) == int((n * (n - 1)) / 2) + n
 
 
+def test_get_num_edges():
+    n = 250
+    p = 0.8
+    num_edges = sgtl.random._get_number_of_edges(n, n, p, True, True, False)
+    expected_edges = p * ((n * (n - 1) / 2) + n)
+    assert abs((num_edges / expected_edges) - 1) <= 0.1
+
+
 def test_sbm():
     # Generate a probability matrix for a directed graph
     prob_mat_q = [[0.4, 0.1, 0.01, 0], [0.2, 0.4, 0.01, 0], [0.01, 0.3, 0.6, 0.2], [0, 0.2, 0.1, 0.6]]
@@ -43,7 +51,8 @@ def test_sbm():
 
     # And in a single cluster should be about
     # (n/4) * (n/4) * p
-    assert abs((graph.weight(list(range(500)), list(range(500))) / (int(((n/4) * ((n/4) - 1)) / 2) + (n/4))) - 1) <= 0.1
+    assert abs((graph.weight(list(range(500)), list(range(500))) /
+                (p * sgtl.random._get_num_pos_edges(500, 500, True, False, False))) - 1) <= 0.1
 
 
 def test_ssbm():

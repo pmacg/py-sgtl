@@ -100,15 +100,35 @@ class Graph(object):
         """
         return sum([self.degrees[v] for v in vertex_set])
 
-    def weight(self, vertex_set_l, vertex_set_r):
+    def weight(self, vertex_set_l, vertex_set_r, check_for_overlap=True, sets_are_equal=False):
         """
         Compute the weight of all edges between the two given vertex sets.
 
+        By default, this method needs to check whether the given two sets overlap, this is a somewhat expensive
+        operation. There are two circumstances in which the caller can avoid this:
+
+        * if the caller can guarantee that the sets do not overlap, then set ``check_for_overlap=False``
+        * if the caller can guarantee that the sets are equal, then set ``sets_are_equal=True``
+
         :param vertex_set_l: a collection of vertex indices corresponding to the set L
         :param vertex_set_r: a collection of vertex indices corresponding to the set R
+        :param check_for_overlap: set to ``False`` if the given sets are guaranteed not to overlap
+        :param sets_are_equal: set to ``True`` if the given sets are guaranteed to be equal
         :return: The weight w(L, R)
         """
-        return self.lil_adj_mat[vertex_set_l][:, vertex_set_r].sum()
+        raw_weight = self.lil_adj_mat[vertex_set_l][:, vertex_set_r].sum()
+
+        # If the two sets L and R overlap, we will have double counted any edges inside this overlap.
+        if sets_are_equal:
+            weight_in_overlap = raw_weight
+        elif not check_for_overlap:
+            weight_in_overlap = 0
+        else:
+            overlap = set.intersection(set(vertex_set_l), set(vertex_set_r))
+            weight_in_overlap = self.lil_adj_mat[list(overlap)][:, list(overlap)].sum()
+
+        # Return the corrected weight
+        return int(raw_weight - (weight_in_overlap / 2))
 
     def conductance(self, vertex_set_s):
         """
@@ -121,7 +141,7 @@ class Graph(object):
         :param vertex_set_s: a collection of vertex indices corresponding to the set S
         :return: The conductance :math:`\\phi(S)`
         """
-        return 1 - (2 * self.weight(vertex_set_s, vertex_set_s)) / self.volume(vertex_set_s)
+        return 1 - (2 * self.weight(vertex_set_s, vertex_set_s, sets_are_equal=True)) / self.volume(vertex_set_s)
 
     def bipartiteness(self, vertex_set_l, vertex_set_r):
         """

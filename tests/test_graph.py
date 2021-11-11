@@ -23,6 +23,9 @@ BARBELL5_ADJ_MAT = scipy.sparse.csr_matrix([[0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
                                             [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
                                             ])
 
+# Define a small constant for making sure floats are close
+EPSILON = 0.00001
+
 
 def test_graph_constructor():
     # Start by constructing the cycle graph on 4 vertices.
@@ -141,3 +144,31 @@ def test_path_graph():
         _ = sgtl.graph.complete_graph(0)
 
 
+def test_volume():
+    # Generate a known graph
+    graph = sgtl.Graph(BARBELL5_ADJ_MAT)
+
+    # Get the volume of a konwn set
+    cluster = [0, 1, 2, 3, 4]
+    volume = graph.volume(cluster)
+    assert volume == 21
+
+
+def test_weight():
+    # Generate a known graph
+    graph = sgtl.Graph(BARBELL5_ADJ_MAT)
+
+    # Get the weight of edges from a set to itself
+    cluster = [0, 1, 2, 3, 4]
+    weight = graph.weight(cluster, cluster)
+    assert weight == 10
+
+
+def test_conductance():
+    # Generate a known graph
+    graph = sgtl.Graph(BARBELL5_ADJ_MAT)
+
+    # Get the conductance of a known set
+    cluster = [0, 1, 2, 3, 4]
+    conductance = graph.conductance(cluster)
+    assert abs(conductance - (1/21)) <= EPSILON
