@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+Fixed
+~~~~~
+* `Issue #4 <https://github.com/pmacg/py-sgtl/issues/4>`_ - definition of normalised laplacian was incorrect
+
 0.3.2 - 2021-11-11
 ------------------
 
