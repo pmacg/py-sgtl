@@ -78,7 +78,7 @@ class Graph(object):
 
         where I is the identity matrix and D is the diagonal degree matrix of the graph.
         """
-        return self.inverse_sqrt_degree_matrix() @ self.laplacian_matrix() @ self.inverse_degree_matrix()
+        return self.inverse_sqrt_degree_matrix() @ self.laplacian_matrix() @ self.inverse_sqrt_degree_matrix()
 
     def random_walk_laplacian_matrix(self):
         """

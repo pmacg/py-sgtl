@@ -1,11 +1,13 @@
 """
 Tests for the graph object.
 """
+import numpy as np
 import scipy as sp
 import scipy.sparse
 import math
 import pytest
 from context import sgtl
+import sgtl.random
 
 # Define the adjacency matrices of some useful graphs.
 C4_ADJ_MAT = scipy.sparse.csr_matrix([[0, 1, 0, 1], [1, 0, 1, 0], [0, 1, 0, 1], [1, 0, 1, 0]])
@@ -172,3 +174,19 @@ def test_conductance():
     cluster = [0, 1, 2, 3, 4]
     conductance = graph.conductance(cluster)
     assert abs(conductance - (1/21)) <= EPSILON
+
+
+def test_symmetry():
+    # Generate a large graph from the stochastic block model
+    big_graph = sgtl.random.ssbm(1000, 5, 0.8, 0.2)
+
+    # Check that all of the graph matrices are truly symmetric
+    assert np.allclose(big_graph.adj_mat.toarray(), big_graph.adj_mat.toarray().T)
+
+    lap_mat = big_graph.normalised_laplacian_matrix()
+    lap_mat_dense = lap_mat.toarray()
+    assert np.allclose(lap_mat_dense, lap_mat_dense.T)
+
+    lap_mat = big_graph.laplacian_matrix()
+    lap_mat_dense = lap_mat.toarray()
+    assert np.allclose(lap_mat_dense, lap_mat_dense.T)
