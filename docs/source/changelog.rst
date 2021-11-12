@@ -13,16 +13,16 @@ Fixed
 
 Fixed
 ~~~~~
-* The `ssbm` method will not allow non-float probabilities
-* The `Graph.weight` method will give the correct value when sets are equal
-* Prevent `sbm` method from generating duplicate edges
+* The ``ssbm`` method will not allow non-float probabilities
+* The ``Graph.weight`` method will give the correct value when sets are equal
+* Prevent ``sbm`` method from generating duplicate edges
 
 0.3 - 2021-11-11
 ----------------
 
 Changed
 ~~~~~~~
-* Changed the name of the `sbm` module to `random`.
+* Changed the name of the ``sbm`` module to ``random``.
 
 Added
 ~~~~~
