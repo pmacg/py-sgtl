@@ -9,18 +9,23 @@ This document provides a checklist for the maintainer of the library to follow.
 The next release of the library is tracked by the `git` branch `next-release`.
 
 ## Developing an enhancement or bugfix
-Please follow this checklist.
-* Check out a new branch for the enhancement or bugfix from the branch `next-release`.
+Thanks for your interest in contributing to this project. Please follow the following process when contributing.
+
+* Ensure there is an issue on the Github project for the development you would like to do. Feel free to create an issue describing the change you will make.
+* Fork the project.
+* Check out a new branch for the enhancement or bugfix **from the branch `next-release`**.
 * Write tests for the new functionality you are developing or the bug you are fixing.
 * Develop the code for the new functionality or bugfix.
 * Make sure the new code is well documented - full docstrings and comments in the code.
 * Add an entry to the `changelog.rst` file in the documentation folder.
 * Run the `check.sh` script to run all of the python tests and to build the documentation, ensure this script succeeds.
 * Check the generated documentation for the new development.
-* Merge the development branch to the `next-release` branch.
+* Commit all of your changes, including the newly generated documentation files, if any.
+* Submit a pull request from your development branch into the `next-releaes` branch of the main project.
 
 ## Releasing a new version of the library
-Please follow this checklist
+This process is for the maintainer of the library only, and is not expected to be followed by other contributers.
+
 * Check out a new release branch from the branch `next-release`.
 * Update the version number of the release in `conf.py` for the documentation and `setup.py` for PyPI.
 * Update the `changelog.rst` file with the name and date of the release.
