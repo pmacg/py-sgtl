@@ -30,21 +30,37 @@ class Graph(object):
         :param adj_mat: A sparse scipy matrix.
         """
         # The graph is represented by the sparse adjacency matrix. We store the adjacency matrix in two sparse formats.
+        # We can assume that there are no non-zero entries in the stored adjacency matrix.
         self.adj_mat = adj_mat.tocsr()
+        self.adj_mat.eliminate_zeros()
         self.lil_adj_mat = adj_mat.tolil()
 
-        # For convenience, and to speed up operations on the graph, we precompute various pieces of information about
-        # the graph.
-
-        # Store the degrees of the vertices in the graph.
+        # For convenience, and to speed up operations on the graph, we precompute the degrees of the vertices in the
+        # graph.
         self.degrees = adj_mat.sum(axis=0).tolist()[0]
         self.inv_degrees = list(map(lambda x: 1 / x if x != 0 else 0, self.degrees))
         self.sqrt_degrees = list(map(math.sqrt, self.degrees))
         self.inv_sqrt_degrees = list(map(lambda x: 1 / x if x > 0 else 0, self.sqrt_degrees))
 
-        # Store the number of edges and vertices in the graph.
-        self.num_vertices = self.adj_mat.shape[0]
-        self.num_edges = round(sum(self.degrees) / 2)
+    def number_of_vertices(self) -> int:
+        """The number of vertices in the graph."""
+        return self.adj_mat.shape[0]
+
+    def total_volume(self) -> float:
+        """The total volume of the graph."""
+        return (sum(self.degrees) + self._volume_of_self_loops()) / 2
+
+    def _number_of_self_loops(self) -> int:
+        """Get the number of self-loops in the graph."""
+        return np.count_nonzero(self.adj_mat.diagonal())
+
+    def _volume_of_self_loops(self) -> float:
+        """Get the total weight of all self-loops in the graph."""
+        return float(np.sum(self.adj_mat.diagonal()))
+
+    def number_of_edges(self) -> int:
+        """The number of edges in the graph, ignoring any weights."""
+        return int((self.adj_mat.nnz + self._number_of_self_loops()) / 2)
 
     def degree_matrix(self):
         """Construct the diagonal degree matrix of the graph."""
