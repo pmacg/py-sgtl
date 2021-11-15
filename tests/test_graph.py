@@ -190,3 +190,15 @@ def test_symmetry():
     lap_mat = big_graph.laplacian_matrix()
     lap_mat_dense = lap_mat.toarray()
     assert np.allclose(lap_mat_dense, lap_mat_dense.T)
+
+def test_out_of_range():
+    # Create a graph
+    graph = sgtl.graph.complete_graph(5)
+
+    # Check the error message when trying to access a vertex which doesn't exist
+    with pytest.raises(IndexError, match="Input vertex set includes indices larger than the number of vertices."):
+        _ = graph.volume([6])
+    with pytest.raises(IndexError, match="Input vertex set includes indices larger than the number of vertices."):
+        _ = graph.volume([0, 1, 2, 3, 4, 5])
+    with pytest.raises(IndexError, match="Input vertex set includes indices larger than the number of vertices."):
+        _ = graph.weight([0, 1, 2], [6])

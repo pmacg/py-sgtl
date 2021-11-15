@@ -98,6 +98,7 @@ class Graph(object):
         :param vertex_set: an iterable collection of vertex indices
         :return: The volume of vertex_set
         """
+        self._check_vert_num(vertex_set)
         return sum([self.degrees[v] for v in vertex_set])
 
     def weight(self, vertex_set_l, vertex_set_r, check_for_overlap=True, sets_are_equal=False):
@@ -116,6 +117,7 @@ class Graph(object):
         :param sets_are_equal: set to ``True`` if the given sets are guaranteed to be equal
         :return: The weight w(L, R)
         """
+        self._check_vert_num(vertex_set_l, vertex_set_r)
         raw_weight = self.lil_adj_mat[vertex_set_l][:, vertex_set_r].sum()
 
         # If the two sets L and R overlap, we will have double counted any edges inside this overlap.
@@ -141,6 +143,7 @@ class Graph(object):
         :param vertex_set_s: a collection of vertex indices corresponding to the set S
         :return: The conductance :math:`\\phi(S)`
         """
+        self._check_vert_num(vertex_set_s)
         return 1 - (2 * self.weight(vertex_set_s, vertex_set_s, sets_are_equal=True)) / self.volume(vertex_set_s)
 
     def bipartiteness(self, vertex_set_l, vertex_set_r):
@@ -156,7 +159,18 @@ class Graph(object):
         :param vertex_set_r: a collection of vertex indices corresponding to the set R
         :return: The bipartiteness ratio \beta(L, R)
         """
+        self._check_vert_num(vertex_set_l, vertex_set_r)
         return 1 - 2 * self.weight(vertex_set_l, vertex_set_r) / self.volume(vertex_set_l + vertex_set_r)
+
+    def _check_vert_num(self, *args):
+        """
+        Check that the number of vertices in a set is not greater than the number of vertices in the graph
+        :param *args: the sets to be tested
+        """
+        for arg in args:
+            for vert in arg:
+                if vert >= self.num_vertices:
+                    raise IndexError("Input vertex set includes indices larger than the number of vertices.")
 
 
 def complete_graph(n: int) -> Graph:
@@ -210,7 +224,7 @@ def cycle_graph(n: int) -> Graph:
         raise ValueError("The graph must contain at least one vertex.")
 
     # Generate the cycle graph adjacency matrix
-    adj_mat = sp.sparse.diags([np.ones(n-1), np.ones(n-1), np.ones(1), np.ones(1)], [-1, 1, (n-1), (1-n)])
+    adj_mat = sp.sparse.diags([np.ones(n - 1), np.ones(n - 1), np.ones(1), np.ones(1)], [-1, 1, (n - 1), (1 - n)])
     return Graph(adj_mat)
 
 
@@ -268,5 +282,5 @@ def path_graph(n: int) -> Graph:
         raise ValueError("The graph must contain at least one vertex.")
 
     # Generate the cycle graph adjacency matrix
-    adj_mat = sp.sparse.diags([np.ones(n-1), np.ones(n-1)], [-1, 1])
+    adj_mat = sp.sparse.diags([np.ones(n - 1), np.ones(n - 1)], [-1, 1])
     return Graph(adj_mat)
