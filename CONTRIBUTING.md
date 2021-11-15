@@ -12,6 +12,7 @@ Thanks for your interest in contributing to this project. Please follow the foll
 * Develop the code for the new functionality or bugfix.
 * Make sure the new code is well documented - full docstrings and comments in the code.
 * Add an entry to the `changelog.rst` file in the documentation folder.
+  * If there is no section for the next release yet, add a new release section named 'Unreleased'.
 * Run the `check.sh` script to run all of the python tests and to build the documentation, ensure this script succeeds.
 * Check the generated documentation for the new development.
 * Commit all of your changes, including the newly generated documentation files, if any.
