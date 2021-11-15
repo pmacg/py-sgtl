@@ -64,15 +64,17 @@ class Graph(object):
 
     def degree_matrix(self):
         """Construct the diagonal degree matrix of the graph."""
-        return sp.sparse.spdiags(self.degrees, [0], self.num_vertices, self.num_vertices, format="csr")
+        return sp.sparse.spdiags(self.degrees, [0], self.number_of_vertices(), self.number_of_vertices(), format="csr")
 
     def inverse_degree_matrix(self):
         """Construct the inverse of the diagonal degree matrix of the graph."""
-        return sp.sparse.spdiags(self.inv_degrees, [0], self.num_vertices, self.num_vertices, format="csr")
+        return sp.sparse.spdiags(self.inv_degrees, [0], self.number_of_vertices(), self.number_of_vertices(),
+                                 format="csr")
 
     def inverse_sqrt_degree_matrix(self):
         """Construct the square root of the inverse of the diagonal degree matrix of the graph."""
-        return sp.sparse.spdiags(self.inv_sqrt_degrees, [0], self.num_vertices, self.num_vertices, format="csr")
+        return sp.sparse.spdiags(self.inv_sqrt_degrees, [0], self.number_of_vertices(), self.number_of_vertices(),
+                                 format="csr")
 
     def laplacian_matrix(self):
         """
