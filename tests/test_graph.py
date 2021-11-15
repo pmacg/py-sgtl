@@ -125,7 +125,7 @@ def test_star_graph():
 
 
 def test_path_graph():
-    # Create a star graph
+    # Create a path graph
     n = 5
     graph = sgtl.graph.path_graph(n)
     expected_adjacency_matrix = sp.sparse.csr_matrix([[0, 1, 0, 0, 0],
@@ -173,7 +173,7 @@ def test_conductance():
     # Get the conductance of a known set
     cluster = [0, 1, 2, 3, 4]
     conductance = graph.conductance(cluster)
-    assert abs(conductance - (1/21)) <= EPSILON
+    assert conductance == pytest.approx(1/21)
 
 
 def test_symmetry():
