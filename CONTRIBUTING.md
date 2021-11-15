@@ -33,3 +33,5 @@ This process is for the maintainer of the library only, and is not expected to b
 * Upload the package with `twine upload dist/*`.
 * Merge the release branch to the `main` branch.
 * Merge the main branch to the `next-release` branch.
+* Create a new release in Github named `Version vX.X.X` with a new tag `vX.X.X` pointing at the release branch.
+* Delete the release branch.
