@@ -2,10 +2,11 @@
 Provides the Graph object, which is our core representation of a graph within the SGTL library.
 """
 import math
+from typing import List
+
 import scipy
 import scipy.sparse
 import numpy as np
-from typing import List
 
 
 class Graph:
