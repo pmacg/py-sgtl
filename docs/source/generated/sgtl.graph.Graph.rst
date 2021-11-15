@@ -24,7 +24,10 @@ sgtl.graph.Graph
       ~Graph.inverse_sqrt_degree_matrix
       ~Graph.laplacian_matrix
       ~Graph.normalised_laplacian_matrix
+      ~Graph.number_of_edges
+      ~Graph.number_of_vertices
       ~Graph.random_walk_laplacian_matrix
+      ~Graph.total_volume
       ~Graph.volume
       ~Graph.weight
    

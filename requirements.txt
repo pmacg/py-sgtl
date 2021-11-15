@@ -3,3 +3,4 @@ sklearn
 pytest
 furo
 numpy
+pylint

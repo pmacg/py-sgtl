@@ -1,6 +1,21 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+Changed
+~~~~~~~
+* `Issue #3 <https://github.com/pmacg/py-sgtl/issues/3>`_ - move members ``graph.num_edges`` and ``graph.num_vertices`` to new methods ``graph.number_of_edges`` and ``graph.number_of_vertices``.
+
+Added
+~~~~~
+* `Issue #3 <https://github.com/pmacg/py-sgtl/issues/3>`_ - add ``total_volume`` method to ``sgtl.graph.Graph``
+
+Fixed
+~~~~~
+* `Issue #3 <https://github.com/pmacg/py-sgtl/issues/3>`_ - correct number of edges for weighted graphs
+
 0.3.3 - 2021-11-12
 ------------------
 
