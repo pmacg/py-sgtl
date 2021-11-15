@@ -1,5 +1,10 @@
 name: Python and Documentation Tests
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - next_release
+  pull_request:
 jobs:
   test:
     runs-on: ubuntu-latest
