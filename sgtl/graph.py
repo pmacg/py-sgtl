@@ -1,13 +1,15 @@
 """
 Provides the Graph object, which is our core representation of a graph within the SGTL library.
 """
-import scipy as sp
+import math
+from typing import List
+
+import scipy
 import scipy.sparse
 import numpy as np
-import math
 
 
-class Graph(object):
+class Graph:
     """
     Represents a graph. We keep things very simple - a graph is represented by its sparse adjacency matrix.
 
@@ -30,33 +32,52 @@ class Graph(object):
         :param adj_mat: A sparse scipy matrix.
         """
         # The graph is represented by the sparse adjacency matrix. We store the adjacency matrix in two sparse formats.
+        # We can assume that there are no non-zero entries in the stored adjacency matrix.
         self.adj_mat = adj_mat.tocsr()
+        self.adj_mat.eliminate_zeros()
         self.lil_adj_mat = adj_mat.tolil()
 
-        # For convenience, and to speed up operations on the graph, we precompute various pieces of information about
-        # the graph.
-
-        # Store the degrees of the vertices in the graph.
+        # For convenience, and to speed up operations on the graph, we precompute the degrees of the vertices in the
+        # graph.
         self.degrees = adj_mat.sum(axis=0).tolist()[0]
         self.inv_degrees = list(map(lambda x: 1 / x if x != 0 else 0, self.degrees))
         self.sqrt_degrees = list(map(math.sqrt, self.degrees))
         self.inv_sqrt_degrees = list(map(lambda x: 1 / x if x > 0 else 0, self.sqrt_degrees))
 
-        # Store the number of edges and vertices in the graph.
-        self.num_vertices = self.adj_mat.shape[0]
-        self.num_edges = round(sum(self.degrees) / 2)
+    def number_of_vertices(self) -> int:
+        """The number of vertices in the graph."""
+        return self.adj_mat.shape[0]
+
+    def total_volume(self) -> float:
+        """The total volume of the graph."""
+        return (sum(self.degrees) + self._volume_of_self_loops()) / 2
+
+    def _number_of_self_loops(self) -> int:
+        """Get the number of self-loops in the graph."""
+        return np.count_nonzero(self.adj_mat.diagonal())
+
+    def _volume_of_self_loops(self) -> float:
+        """Get the total weight of all self-loops in the graph."""
+        return float(np.sum(self.adj_mat.diagonal()))
+
+    def number_of_edges(self) -> int:
+        """The number of edges in the graph, ignoring any weights."""
+        return int((self.adj_mat.nnz + self._number_of_self_loops()) / 2)
 
     def degree_matrix(self):
         """Construct the diagonal degree matrix of the graph."""
-        return sp.sparse.spdiags(self.degrees, [0], self.num_vertices, self.num_vertices, format="csr")
+        return scipy.sparse.spdiags(
+            self.degrees, [0], self.number_of_vertices(), self.number_of_vertices(), format="csr")
 
     def inverse_degree_matrix(self):
         """Construct the inverse of the diagonal degree matrix of the graph."""
-        return sp.sparse.spdiags(self.inv_degrees, [0], self.num_vertices, self.num_vertices, format="csr")
+        return scipy.sparse.spdiags(self.inv_degrees, [0], self.number_of_vertices(), self.number_of_vertices(),
+                                    format="csr")
 
     def inverse_sqrt_degree_matrix(self):
         """Construct the square root of the inverse of the diagonal degree matrix of the graph."""
-        return sp.sparse.spdiags(self.inv_sqrt_degrees, [0], self.num_vertices, self.num_vertices, format="csr")
+        return scipy.sparse.spdiags(self.inv_sqrt_degrees, [0], self.number_of_vertices(), self.number_of_vertices(),
+                                    format="csr")
 
     def laplacian_matrix(self):
         """
@@ -101,7 +122,11 @@ class Graph(object):
         self._check_vert_num(vertex_set)
         return sum([self.degrees[v] for v in vertex_set])
 
-    def weight(self, vertex_set_l, vertex_set_r, check_for_overlap=True, sets_are_equal=False):
+    def weight(self,
+               vertex_set_l: List[int],
+               vertex_set_r: List[int],
+               check_for_overlap=True,
+               sets_are_equal=False) -> float:
         """
         Compute the weight of all edges between the two given vertex sets.
 
@@ -120,17 +145,20 @@ class Graph(object):
         self._check_vert_num(vertex_set_l, vertex_set_r)
         raw_weight = self.lil_adj_mat[vertex_set_l][:, vertex_set_r].sum()
 
-        # If the two sets L and R overlap, we will have double counted any edges inside this overlap.
+        # If the two sets L and R overlap, we will have double counted any edges inside this overlap, save for the
+        # self-loops
         if sets_are_equal:
-            weight_in_overlap = raw_weight
+            weight_to_remove = raw_weight / 2
+            weight_to_remove -= sum([self.adj_mat[i, i] for i in vertex_set_l]) / 2
         elif not check_for_overlap:
-            weight_in_overlap = 0
+            weight_to_remove = 0
         else:
             overlap = set.intersection(set(vertex_set_l), set(vertex_set_r))
-            weight_in_overlap = self.lil_adj_mat[list(overlap)][:, list(overlap)].sum()
+            weight_to_remove = self.lil_adj_mat[list(overlap)][:, list(overlap)].sum() / 2
+            weight_to_remove -= sum([self.adj_mat[i, i] for i in overlap]) / 2
 
         # Return the corrected weight
-        return int(raw_weight - (weight_in_overlap / 2))
+        return raw_weight - weight_to_remove
 
     def conductance(self, vertex_set_s):
         """
@@ -164,20 +192,19 @@ class Graph(object):
 
     def _check_vert_num(self, *args):
         """
-        Check that the number of vertices in a set is not greater than the number of vertices in the graph
-        :param *args: the sets to be tested
+        Check that tje input vertex set does not include indicdes greater than the number of vertices
         """
         for arg in args:
             for vert in arg:
-                if vert >= self.num_vertices:
+                if vert >= self.number_of_vertices():
                     raise IndexError("Input vertex set includes indices larger than the number of vertices.")
 
 
-def complete_graph(n: int) -> Graph:
+def complete_graph(number_of_vertices: int) -> Graph:
     """
     Construct the complete unweighted graph on :math:`n` vertices.
 
-    :param n: The number of vertices in the graph.
+    :param number_of_vertices: The number of vertices in the graph.
     :return: The complete graph on :math:`n` vertices, as a `Graph` object.
     :raises ValueError: if the number of vertices is not a positive integer.
 
@@ -192,19 +219,19 @@ def complete_graph(n: int) -> Graph:
               [1., 1., 1., 0.]])
 
     """
-    if n <= 0:
+    if number_of_vertices <= 0:
         raise ValueError("The graph must contain at least one vertex.")
 
     # Generate the complete adjacency matrix - we generate a dense matrix first
-    adj_mat = sp.sparse.csr_matrix(np.ones((n, n)) - np.eye(n))
+    adj_mat = scipy.sparse.csr_matrix(np.ones((number_of_vertices, number_of_vertices)) - np.eye(number_of_vertices))
     return Graph(adj_mat)
 
 
-def cycle_graph(n: int) -> Graph:
+def cycle_graph(number_of_vertices: int) -> Graph:
     """
     Construct the unweighted cycle graph on :math:`n` vertices.
 
-    :param n: The number of vertices in the graph
+    :param number_of_vertices: The number of vertices in the graph
     :return: The cycle graph on :math:`n` vertices, as a `Graph` object.
     :raises ValueError: if the number of vertices is not a positive integer.
 
@@ -220,19 +247,24 @@ def cycle_graph(n: int) -> Graph:
               [1., 0., 0., 1., 0.]])
 
     """
-    if n <= 0:
+    if number_of_vertices <= 0:
         raise ValueError("The graph must contain at least one vertex.")
 
     # Generate the cycle graph adjacency matrix
     adj_mat = sp.sparse.diags([np.ones(n - 1), np.ones(n - 1), np.ones(1), np.ones(1)], [-1, 1, (n - 1), (1 - n)])
+    adj_mat = scipy.sparse.diags([np.ones(number_of_vertices - 1),
+                                  np.ones(number_of_vertices - 1),
+                                  np.ones(1),
+                                  np.ones(1)],
+                                 [-1, 1, (number_of_vertices - 1), (1 - number_of_vertices)])
     return Graph(adj_mat)
 
 
-def star_graph(n: int) -> Graph:
+def star_graph(number_of_vertices: int) -> Graph:
     """
     Construct the unweighted star graph on :math:`n` vertices.
 
-    :param n: The number of vertices in the graph
+    :param number_of_vertices: The number of vertices in the graph
     :return: The star graph on :math:`n` vertices, as a `Graph` object.
     :raises ValueError: if the number of vertices is not a positive integer.
 
@@ -247,22 +279,22 @@ def star_graph(n: int) -> Graph:
               [1., 0., 0., 0.]])
 
     """
-    if n <= 0:
+    if number_of_vertices <= 0:
         raise ValueError("The graph must contain at least one vertex.")
 
     # Generate the cycle graph adjacency matrix
-    adj_mat = sp.sparse.lil_matrix((n, n))
-    for i in range(1, n):
+    adj_mat = scipy.sparse.lil_matrix((number_of_vertices, number_of_vertices))
+    for i in range(1, number_of_vertices):
         adj_mat[0, i] = 1
         adj_mat[i, 0] = 1
     return Graph(adj_mat)
 
 
-def path_graph(n: int) -> Graph:
+def path_graph(number_of_vertices: int) -> Graph:
     """
     Construct the unweighted path graph on :math:`n` vertices.
 
-    :param n: The number of vertices in the graph
+    :param number_of_vertices: The number of vertices in the graph
     :return: The path graph on :math:`n` vertices, as a `Graph` object.
     :raises ValueError: if the number of vertices is not a positive integer.
 
@@ -278,9 +310,10 @@ def path_graph(n: int) -> Graph:
               [0., 0., 0., 1., 0.]])
 
     """
-    if n <= 0:
+    if number_of_vertices <= 0:
         raise ValueError("The graph must contain at least one vertex.")
 
     # Generate the cycle graph adjacency matrix
     adj_mat = sp.sparse.diags([np.ones(n - 1), np.ones(n - 1)], [-1, 1])
+    adj_mat = scipy.sparse.diags([np.ones(number_of_vertices - 1), np.ones(number_of_vertices - 1)], [-1, 1])
     return Graph(adj_mat)

@@ -6,6 +6,14 @@ python3 -m pytest || exit
 echo ""
 echo ""
 
+# Run pylint
+echo "|----------------|"
+echo "| Running pylint |"
+echo "|----------------|"
+pylint --max-line-length=120 sgtl || exit
+echo ""
+echo ""
+
 # Re-build all of the documentation
 echo "|---------------|"
 echo "| Building docs |"
