@@ -23,40 +23,40 @@ def _get_num_pos_edges(c1_size, c2_size, same_cluster, self_loops, directed):
     if not same_cluster:
         # The number is simply the product of the number of vertices
         return c1_size * c2_size
-    else:
-        # The base number is n choose 2
-        possible_edges_between_clusters = int((c1_size * (c1_size - 1)) / 2)
 
-        # If we are allowed self-loops, then add them on
-        if self_loops:
-            possible_edges_between_clusters += c1_size
+    # The base number is n choose 2
+    possible_edges_between_clusters = int((c1_size * (c1_size - 1)) / 2)
 
-        # The number is normally the same for undirected and directed graphs, unless the clusters are the same, in which
-        # case the number for the directed graph is double since we need to consider both directions of each edge.
-        if directed:
-            possible_edges_between_clusters *= 2
+    # If we are allowed self-loops, then add them on
+    if self_loops:
+        possible_edges_between_clusters += c1_size
 
-        # But if we are allowed self-loops, then we shouldn't double them since there is only one 'direction'.
-        if directed and self_loops:
-            possible_edges_between_clusters -= c1_size
+    # The number is normally the same for undirected and directed graphs, unless the clusters are the same, in which
+    # case the number for the directed graph is double since we need to consider both directions of each edge.
+    if directed:
+        possible_edges_between_clusters *= 2
 
-        return possible_edges_between_clusters
+    # But if we are allowed self-loops, then we shouldn't double them since there is only one 'direction'.
+    if directed and self_loops:
+        possible_edges_between_clusters -= c1_size
+
+    return possible_edges_between_clusters
 
 
-def _get_number_of_edges(c1_size, c2_size, prob, same_cluster, self_loops, directed):
+def _get_number_of_edges(c1_size, c2_size, prob, same_cluster, directed):
     """
-    Compute the number of edges there will be between two clusters.
+    Compute the number of edges there will be between two clusters. If the two clusters are the same, then this method
+    will assume we are generating self-loops.
 
     :param c1_size: The size of the first cluster
     :param c2_size: The size of the second cluster
     :param prob: The probability of an edge between the clusters
     :param same_cluster: Whether these are the same cluster
-    :param self_loops: Whether we will generate self loop
     :param directed: Whether we are generating a directed graph
     :return: the number of edges to generate between these clusters
     """
     # We need to compute the number of possible edges
-    possible_edges_between_clusters = _get_num_pos_edges(c1_size, c2_size, same_cluster, self_loops, directed)
+    possible_edges_between_clusters = _get_num_pos_edges(c1_size, c2_size, same_cluster, True, directed)
 
     # Sample the number of edges from the binomial distribution
     return np.random.binomial(possible_edges_between_clusters, prob)
@@ -86,7 +86,7 @@ def _generate_sbm_edges(cluster_sizes, prob_mat_q, directed=False):
     # cluster_1.
     c1_base_index = 0
 
-    for cluster_1 in range(len(cluster_sizes)):
+    for cluster_1_idx, cluster_1_size in enumerate(cluster_sizes):
         # Keep track of the index of the first vertex in the current cluster_2
         c2_base_index = c1_base_index
 
@@ -96,39 +96,39 @@ def _generate_sbm_edges(cluster_sizes, prob_mat_q, directed=False):
             second_clusters = range(len(cluster_sizes))
             c2_base_index = 0
         else:
-            second_clusters = range(cluster_1, len(cluster_sizes))
+            second_clusters = range(cluster_1_idx, len(cluster_sizes))
 
-        for cluster_2 in second_clusters:
-            if cluster_2 == cluster_1:
+        for cluster_2_idx in second_clusters:
+            cluster_2_size = cluster_sizes[cluster_2_idx]
+            if cluster_2_idx == cluster_1_idx:
                 # If the clusters are the same, we will iterate through each vertex
-                for v in range(c1_base_index, c1_base_index + cluster_sizes[cluster_1]):
+                for vertex_2 in range(c1_base_index, c1_base_index + cluster_1_size):
                     # Get the number of edges leaving this vertex
-                    num_edges = np.random.binomial(cluster_sizes[cluster_1] - (v - c1_base_index),
-                                                   prob_mat_q[cluster_1][cluster_2])
+                    num_edges = np.random.binomial(cluster_1_size - (vertex_2 - c1_base_index),
+                                                   prob_mat_q[cluster_1_idx][cluster_2_idx])
                     # Sample this number of edges and yield them
-                    for u in random.sample(range(v, c1_base_index + cluster_sizes[cluster_1]), num_edges):
-                        yield v, u
+                    for vertex_1 in random.sample(range(vertex_2, c1_base_index + cluster_1_size), num_edges):
+                        yield vertex_2, vertex_1
             else:
                 # Compute the number of edges between these two clusters
-                num_edges = _get_number_of_edges(cluster_sizes[cluster_1],
-                                                 cluster_sizes[cluster_2],
-                                                 prob_mat_q[cluster_1][cluster_2],
-                                                 cluster_1 == cluster_2,
-                                                 True,
+                num_edges = _get_number_of_edges(cluster_1_size,
+                                                 cluster_2_size,
+                                                 prob_mat_q[cluster_1_idx][cluster_2_idx],
+                                                 cluster_1_idx == cluster_2_idx,
                                                  directed)
 
                 # Sample this number of edges.
-                num_possible_edges = (cluster_sizes[cluster_1] * cluster_sizes[cluster_2]) - 1
+                num_possible_edges = (cluster_1_size * cluster_2_size) - 1
                 for edge_idx in random.sample(range(num_possible_edges), num_edges):
-                    u = c1_base_index + int(edge_idx / cluster_sizes[cluster_1])
-                    v = c2_base_index + (edge_idx % cluster_sizes[cluster_1])
-                    yield u, v
+                    vertex_1 = c1_base_index + int(edge_idx / cluster_1_size)
+                    vertex_2 = c2_base_index + (edge_idx % cluster_1_size)
+                    yield vertex_1, vertex_2
 
             # Update the base index for the second cluster
-            c2_base_index += cluster_sizes[cluster_2]
+            c2_base_index += cluster_2_size
 
         # Update the base index of this cluster
-        c1_base_index += cluster_sizes[cluster_1]
+        c1_base_index += cluster_1_size
 
 
 def sbm(cluster_sizes, prob_mat_q, directed=False, self_loops=False):
@@ -173,13 +173,13 @@ def sbm(cluster_sizes, prob_mat_q, directed=False, self_loops=False):
     adj_mat = scipy.sparse.lil_matrix((sum(cluster_sizes), sum(cluster_sizes)))
 
     # Generate the edges in the graph
-    for (u, v) in _generate_sbm_edges(cluster_sizes, prob_mat_q, directed=directed):
-        if u != v or self_loops:
+    for (vertex_1, vertex_2) in _generate_sbm_edges(cluster_sizes, prob_mat_q, directed=directed):
+        if vertex_1 != vertex_2 or self_loops:
             # Add this edge to the adjacency matrix.
-            adj_mat[u, v] = 1
+            adj_mat[vertex_1, vertex_2] = 1
 
             if not directed:
-                adj_mat[v, u] = 1
+                adj_mat[vertex_2, vertex_1] = 1
 
     # Construct the graph and return it.
     return graph.Graph(adj_mat)
@@ -198,6 +198,9 @@ def sbm_equal_clusters(n, k, prob_mat_q, directed=False):
     :param directed: Whether to generate a directed graph.
     :return: The generated graph as an ``sgtl.Graph`` object.
     """
+    # We are ok with using the 'n', and 'k' variable names for the stochastic block model - these are standard notation
+    # for this model.
+    # pylint: disable=invalid-name
     return sbm([int(n/k)] * k, prob_mat_q, directed=directed)
 
 
@@ -215,12 +218,16 @@ def ssbm(n: int, k: int, p: float, q: float, directed=False):
     :param directed: Whether to generate a directed graph.
     :return: The generated graph as an ``sgtl.Graph`` object.
     """
+    # We are ok with using the 'n', 'k', 'p', and 'q' variable names for the stochastic block model - these are
+    # standard notation for this model.
+    # pylint: disable=invalid-name
+
     # Make sure that the value q is an integer or float
     try:
         p = float(p)
         q = float(q)
-    except Exception:
-        raise TypeError("The probabilities p and q must be numbers between 0 and 1.")
+    except Exception as error:
+        raise TypeError("The probabilities p and q must be numbers between 0 and 1.") from error
 
     # Every cluster has the same size.
     cluster_sizes = [int(n/k)] * k
@@ -247,4 +254,7 @@ def erdos_renyi(n, p):
     :param p: The probability of an edge between each pair of vertices.
     :return: The generated graph as an ``sgtl.Graph`` object.
     """
+    # We are ok with using the 'n', and 'q' variable names for the stochastic block model - these are standard notation
+    # for this model.
+    # pylint: disable=invalid-name
     return ssbm(n, 1, p, p)

@@ -1,7 +1,7 @@
 """
 Various graph clustering algorithms based on spectral graph theory.
 """
-import scipy as sp
+import scipy
 import scipy.sparse
 import scipy.sparse.linalg
 from sklearn.cluster import KMeans
@@ -27,14 +27,14 @@ def spectral_clustering(graph, num_clusters, num_eigenvectors=None):
         raise ValueError("You must use more than 0 eigenvectors for spectral clustering.")
     if num_clusters <= 0:
         raise ValueError("You must find at least 1 cluster when using spectral clustering.")
-    if type(num_clusters) is not int or type(num_eigenvectors) is not int:
+    if not isinstance(num_clusters, int) or not isinstance(num_eigenvectors, int):
         raise TypeError("The number of clusters and eigenvectors must be positive integers.")
 
     # Get the normalised laplacian matrix of the graph
     laplacian_matrix = graph.normalised_laplacian_matrix()
 
     # Find the bottom eigenvectors of the laplacian matrix
-    _, eigenvectors = sp.sparse.linalg.eigsh(laplacian_matrix, num_eigenvectors, which='SM')
+    _, eigenvectors = scipy.sparse.linalg.eigsh(laplacian_matrix, num_eigenvectors, which='SM')
 
     # Perform k-means on the eigenvectors to find the clusters
     labels = KMeans(n_clusters=num_clusters).fit_predict(eigenvectors)

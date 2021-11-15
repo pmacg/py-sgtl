@@ -14,7 +14,7 @@ def test_num_pos_edges():
 def test_get_num_edges():
     n = 250
     p = 0.8
-    num_edges = sgtl.random._get_number_of_edges(n, n, p, True, True, False)
+    num_edges = sgtl.random._get_number_of_edges(n, n, p, True, False)
     expected_edges = p * ((n * (n - 1) / 2) + n)
     assert abs((num_edges / expected_edges) - 1) <= 0.1
 
