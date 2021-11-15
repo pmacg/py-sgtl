@@ -14,6 +14,7 @@ Added
 
 Fixed
 ~~~~~
+* `Issue #10 <https://github.com/pmacg/py-sgtl/issues/10>`_ - correct ``graph.weight`` calculation when edges have floating point weights or self-loops
 * `Issue #3 <https://github.com/pmacg/py-sgtl/issues/3>`_ - correct number of edges for weighted graphs
 
 0.3.3 - 2021-11-12

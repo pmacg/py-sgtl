@@ -125,7 +125,7 @@ def test_star_graph():
 
 
 def test_path_graph():
-    # Create a star graph
+    # Create a path graph
     n = 5
     graph = sgtl.graph.path_graph(n)
     expected_adjacency_matrix = sp.sparse.csr_matrix([[0, 1, 0, 0, 0],
@@ -173,7 +173,7 @@ def test_conductance():
     # Get the conductance of a known set
     cluster = [0, 1, 2, 3, 4]
     conductance = graph.conductance(cluster)
-    assert abs(conductance - (1/21)) <= EPSILON
+    assert conductance == pytest.approx(1/21)
 
 
 def test_symmetry():
@@ -237,3 +237,20 @@ def test_num_edges():
     assert graph.number_of_vertices() == 10
     assert graph.number_of_edges() == 24
     assert graph.total_volume() == 26.5
+
+
+def test_float_weights():
+    # Create a graph with floating-point edge weights.
+    adjacency_matrix = scipy.sparse.csr_matrix([[0, 2.2, 0, 1],
+                                                [2.2, 2.6, 3.1, 0],
+                                                [0, 3.1, 0, 1.09],
+                                                [1, 0, 1.09, 0]])
+    graph = sgtl.Graph(adjacency_matrix)
+    assert graph.number_of_vertices() == 4
+    assert graph.number_of_edges() == 5
+    assert graph.total_volume() == pytest.approx(9.99)
+
+    # Check the weight between vertex sets
+    assert graph.weight([0], [1]) == pytest.approx(2.2)
+    assert graph.weight([0], [1, 2, 3]) == pytest.approx(3.2)
+    assert graph.weight([0, 1], [0, 1]) == pytest.approx(4.8)

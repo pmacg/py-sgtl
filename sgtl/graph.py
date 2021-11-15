@@ -2,6 +2,8 @@
 Provides the Graph object, which is our core representation of a graph within the SGTL library.
 """
 import math
+from typing import List
+
 import scipy
 import scipy.sparse
 import numpy as np
@@ -119,7 +121,11 @@ class Graph:
         """
         return sum([self.degrees[v] for v in vertex_set])
 
-    def weight(self, vertex_set_l, vertex_set_r, check_for_overlap=True, sets_are_equal=False):
+    def weight(self,
+               vertex_set_l: List[int],
+               vertex_set_r: List[int],
+               check_for_overlap=True,
+               sets_are_equal=False) -> float:
         """
         Compute the weight of all edges between the two given vertex sets.
 
@@ -137,17 +143,20 @@ class Graph:
         """
         raw_weight = self.lil_adj_mat[vertex_set_l][:, vertex_set_r].sum()
 
-        # If the two sets L and R overlap, we will have double counted any edges inside this overlap.
+        # If the two sets L and R overlap, we will have double counted any edges inside this overlap, save for the
+        # self-loops
         if sets_are_equal:
-            weight_in_overlap = raw_weight
+            weight_to_remove = raw_weight / 2
+            weight_to_remove -= sum([self.adj_mat[i, i] for i in vertex_set_l]) / 2
         elif not check_for_overlap:
-            weight_in_overlap = 0
+            weight_to_remove = 0
         else:
             overlap = set.intersection(set(vertex_set_l), set(vertex_set_r))
-            weight_in_overlap = self.lil_adj_mat[list(overlap)][:, list(overlap)].sum()
+            weight_to_remove = self.lil_adj_mat[list(overlap)][:, list(overlap)].sum() / 2
+            weight_to_remove -= sum([self.adj_mat[i, i] for i in overlap]) / 2
 
         # Return the corrected weight
-        return int(raw_weight - (weight_in_overlap / 2))
+        return raw_weight - weight_to_remove
 
     def conductance(self, vertex_set_s):
         """
