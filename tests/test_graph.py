@@ -190,3 +190,23 @@ def test_symmetry():
     lap_mat = big_graph.laplacian_matrix()
     lap_mat_dense = lap_mat.toarray()
     assert np.allclose(lap_mat_dense, lap_mat_dense.T)
+
+
+def test_num_edges():
+    # Generate a known graph
+    graph = sgtl.Graph(BARBELL5_ADJ_MAT)
+
+    # Check the number of edges in the graph
+    assert graph.num_vertices() == 10
+    assert graph.num_edges() == 21
+    assert graph.total_volume() == 21
+
+    # Now create a weighted graph and check the number of edges method.
+    adjacency_matrix = scipy.sparse.csr_matrix([[0, 2, 0, 1],
+                                                [2, 0, 3, 0],
+                                                [0, 3, 0, 1],
+                                                [1, 0, 1, 0]])
+    graph = sgtl.Graph(adjacency_matrix)
+    assert graph.num_vertices() == 4
+    assert graph.num_edges() == 4
+    assert graph.total_volume() == 7
