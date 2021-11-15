@@ -15,6 +15,7 @@ Thanks for your interest in contributing to this project. Please follow the foll
   * If there is no section for the next release yet, add a new release section named 'Unreleased'.
 * Run the `check.sh` script to run all of the python tests and to build the documentation, ensure this script succeeds.
 * Check the generated documentation for the new development.
+  * This will be in `docs/build/html` after running `check.sh`.
 * Commit all of your changes, including the newly generated documentation files, if any.
 * Submit a pull request from your development branch into the `next-releaes` branch of the main project.
 
