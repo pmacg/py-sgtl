@@ -1,4 +1,4 @@
-name: Python and Documentation Tests
+name: Tests
 on:
   push:
     branches:
