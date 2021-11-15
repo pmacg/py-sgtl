@@ -1,11 +1,5 @@
 # Contributing to the SGTL
 
-There are 2 high level processes when developing this project:
-* develop an enhancement, and merge it to the next release branch
-* make a new release
-
-This document provides a checklist for the maintainer of the library to follow.
-
 The next release of the library is tracked by the `git` branch `next-release`.
 
 ## Developing an enhancement or bugfix
