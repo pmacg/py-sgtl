@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.3.3 - 2021-11-15
+------------------
+Added
+~~~~~
+* The graph._check_vert_num method
+* The test_out_of_range to test graph.check_vert_num
+
 0.3.2 - 2021-11-11
 ------------------
 

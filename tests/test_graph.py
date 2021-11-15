@@ -38,7 +38,7 @@ def test_graph_constructor():
     # Check the vertex degrees
     for i in range(4):
         assert graph.degrees[i] == 2
-        assert graph.inv_degrees[i] == 1/2
+        assert graph.inv_degrees[i] == 1 / 2
         assert graph.sqrt_degrees[i] == math.sqrt(2)
         assert graph.inv_sqrt_degrees[i] == 1 / math.sqrt(2)
 
@@ -48,7 +48,7 @@ def test_graph_constructor():
     assert graph.num_edges == 15
     for i in range(4):
         assert graph.degrees[i] == 5
-        assert graph.inv_degrees[i] == 1/5
+        assert graph.inv_degrees[i] == 1 / 5
         assert graph.sqrt_degrees[i] == math.sqrt(5)
         assert graph.inv_sqrt_degrees[i] == 1 / math.sqrt(5)
 
@@ -171,4 +171,17 @@ def test_conductance():
     # Get the conductance of a known set
     cluster = [0, 1, 2, 3, 4]
     conductance = graph.conductance(cluster)
-    assert abs(conductance - (1/21)) <= EPSILON
+    assert abs(conductance - (1 / 21)) <= EPSILON
+
+
+def test_out_of_range():
+    # Create a graph
+    graph = sgtl.graph.complete_graph(5)
+
+    # Check the error message when trying to access a vertex which doesn't exist
+    with pytest.raises(IndexError, match="Input vertex set includes indices larger than the number of vertices."):
+        _ = graph.volume([6])
+    with pytest.raises(IndexError, match="Input vertex set includes indices larger than the number of vertices."):
+        _ = graph.volume([0, 1, 2, 3, 4, 5])
+    with pytest.raises(IndexError, match="Input vertex set includes indices larger than the number of vertices."):
+        _ = graph.weight([0, 1, 2], [6])
