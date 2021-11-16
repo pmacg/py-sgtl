@@ -119,6 +119,7 @@ class Graph:
         :param vertex_set: an iterable collection of vertex indices
         :return: The volume of vertex_set
         """
+        self._check_vert_num(vertex_set)
         return sum([self.degrees[v] for v in vertex_set])
 
     def weight(self,
@@ -141,6 +142,7 @@ class Graph:
         :param sets_are_equal: set to ``True`` if the given sets are guaranteed to be equal
         :return: The weight w(L, R)
         """
+        self._check_vert_num(vertex_set_l, vertex_set_r)
         raw_weight = self.lil_adj_mat[vertex_set_l][:, vertex_set_r].sum()
 
         # If the two sets L and R overlap, we will have double counted any edges inside this overlap, save for the
@@ -169,6 +171,7 @@ class Graph:
         :param vertex_set_s: a collection of vertex indices corresponding to the set S
         :return: The conductance :math:`\\phi(S)`
         """
+        self._check_vert_num(vertex_set_s)
         return 1 - (2 * self.weight(vertex_set_s, vertex_set_s, sets_are_equal=True)) / self.volume(vertex_set_s)
 
     def bipartiteness(self, vertex_set_l, vertex_set_r):
@@ -184,7 +187,17 @@ class Graph:
         :param vertex_set_r: a collection of vertex indices corresponding to the set R
         :return: The bipartiteness ratio \beta(L, R)
         """
+        self._check_vert_num(vertex_set_l, vertex_set_r)
         return 1 - 2 * self.weight(vertex_set_l, vertex_set_r) / self.volume(vertex_set_l + vertex_set_r)
+
+    def _check_vert_num(self, *args):
+        """
+        Check that the input vertex set does not include indices greater than the number of vertices in the graph
+        """
+        for arg in args:
+            for vert in arg:
+                if vert >= self.number_of_vertices():
+                    raise IndexError("Input vertex set includes indices larger than the number of vertices.")
 
 
 def complete_graph(number_of_vertices: int) -> Graph:

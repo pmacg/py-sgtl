@@ -11,6 +11,7 @@ Changed
 Added
 ~~~~~
 * `Issue #3 <https://github.com/pmacg/py-sgtl/issues/3>`_ - add ``total_volume`` method to ``sgtl.graph.Graph``
+* `Issue #2 <https://github.com/pmacg/py-sgtl/issues/2>`_ - add ``_check_vert_num`` method to ``sgtl.graph.Graph``
 
 Fixed
 ~~~~~
