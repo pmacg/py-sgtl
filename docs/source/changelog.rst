@@ -1,13 +1,6 @@
 Changelog
 =========
 
-0.3.4 - 2021-11-15
-------------------
-
-Added
-~~~~~
-
-
 Unreleased
 ----------
 
@@ -18,13 +11,12 @@ Changed
 Added
 ~~~~~
 * `Issue #3 <https://github.com/pmacg/py-sgtl/issues/3>`_ - add ``total_volume`` method to ``sgtl.graph.Graph``
-* Issue #2 The graph._check_vert_num function
+* `Issue #2 <https://github.com/pmacg/py-sgtl/issues/2>`_ - add ``_check_vert_num`` method to ``sgtl.graph.Graph``
 
 Fixed
 ~~~~~
 * `Issue #10 <https://github.com/pmacg/py-sgtl/issues/10>`_ - correct ``graph.weight`` calculation when edges have floating point weights or self-loops
 * `Issue #3 <https://github.com/pmacg/py-sgtl/issues/3>`_ - correct number of edges for weighted graphs
->>>>>>> da5bec121791044e469244d4d3860ddbbda950f2
 
 0.3.3 - 2021-11-12
 ------------------

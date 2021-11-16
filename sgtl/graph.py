@@ -192,7 +192,7 @@ class Graph:
 
     def _check_vert_num(self, *args):
         """
-        Check that tje input vertex set does not include indicdes greater than the number of vertices
+        Check that the input vertex set does not include indices greater than the number of vertices in the graph
         """
         for arg in args:
             for vert in arg:
@@ -251,7 +251,6 @@ def cycle_graph(number_of_vertices: int) -> Graph:
         raise ValueError("The graph must contain at least one vertex.")
 
     # Generate the cycle graph adjacency matrix
-    # adj_mat = sp.sparse.diags([np.ones(n - 1), np.ones(n - 1), np.ones(1), np.ones(1)], [-1, 1, (n - 1), (1 - n)])
     adj_mat = scipy.sparse.diags([np.ones(number_of_vertices - 1),
                                   np.ones(number_of_vertices - 1),
                                   np.ones(1),
@@ -314,6 +313,5 @@ def path_graph(number_of_vertices: int) -> Graph:
         raise ValueError("The graph must contain at least one vertex.")
 
     # Generate the cycle graph adjacency matrix
-    # adj_mat = sp.sparse.diags([np.ones(n - 1), np.ones(n - 1)], [-1, 1])
     adj_mat = scipy.sparse.diags([np.ones(number_of_vertices - 1), np.ones(number_of_vertices - 1)], [-1, 1])
     return Graph(adj_mat)
