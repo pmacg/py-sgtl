@@ -205,6 +205,25 @@ def test_out_of_range():
     with pytest.raises(IndexError, match="Input vertex set includes indices larger than the number of vertices."):
         _ = graph.weight([0, 1, 2], [6])
 
+
+def test_cond_empty_set():
+    # Create a graph
+    graph = sgtl.graph.complete_graph(5)
+
+    # Test the behaviour when asking for the conductance or bipartiteness of the empty set
+    with pytest.raises(ValueError, match="The conductance of the empty set is undefined."):
+        _ = graph.conductance([])
+    with pytest.raises(ValueError, match="The bipartiteness of the empty set is undefined."):
+        _ = graph.bipartiteness([], [])
+
+    # If only one set is empty, then the bipartiteness is defined
+    bip = graph.bipartiteness([0, 1], [])
+    assert bip == 1
+
+    bip = graph.bipartiteness([], [2, 3, 4])
+    assert bip == 1
+
+
 def test_num_edges():
     # Generate a known graph
     graph = sgtl.Graph(BARBELL5_ADJ_MAT)
