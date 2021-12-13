@@ -214,7 +214,7 @@ class Graph:
 
         :param vertex_set_l: a collection of vertex indices corresponding to the set L
         :param vertex_set_r: a collection of vertex indices corresponding to the set R
-        :return: The bipartiteness ratio \beta(L, R)
+        :return: The bipartiteness ratio :math:`\\beta(L, R)`
         """
         self._check_vert_num(vertex_set_l, vertex_set_r)
         return 1 - 2 * self.weight(vertex_set_l, vertex_set_r) / self.volume(vertex_set_l + vertex_set_r)
