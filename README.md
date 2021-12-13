@@ -13,6 +13,7 @@ You can install the library with `pip install sgtl`.
 * Graph matrices including the Laplacian and Normalised Laplacian
 * Spectral clustering method
 * Generate graphs from the stochastic block model
+* Find the cheeger cut of a graph
 
 ## Documentation
 The full documentation is available [here](https://sgtl.readthedocs.io/en/latest/).

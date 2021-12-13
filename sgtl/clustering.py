@@ -1,13 +1,16 @@
 """
 Various graph clustering algorithms based on spectral graph theory.
 """
+from typing import List
 import scipy
 import scipy.sparse
 import scipy.sparse.linalg
 from sklearn.cluster import KMeans
 
+import sgtl
 
-def spectral_clustering(graph, num_clusters, num_eigenvectors=None):
+
+def spectral_clustering(graph: sgtl.Graph, num_clusters: int, num_eigenvectors=None) -> List[List[int]]:
     """
     Perform spectral clustering on the given graph object.
 

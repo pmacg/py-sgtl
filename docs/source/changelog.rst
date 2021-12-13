@@ -13,6 +13,7 @@ Added
 * `Issue #3 <https://github.com/pmacg/py-sgtl/issues/3>`_ - add ``total_volume`` method to ``sgtl.graph.Graph``
 * `Issue #2 <https://github.com/pmacg/py-sgtl/issues/2>`_ - add ``_check_vert_num`` method to ``sgtl.graph.Graph``
 * `Issue #9 <https://github.com/pmacg/py-sgtl/issues/9>`_ - add methods for converting to and from ``networkx`` graph objects.
+* `Issue #6 <https://github.com/pmacg/py-sgtl/issues/6>`_ - add cheeger cut algorithm
 
 Fixed
 ~~~~~
