@@ -5,6 +5,7 @@ import numpy as np
 import scipy as sp
 import scipy.sparse
 import math
+import networkx
 import pytest
 from context import sgtl
 import sgtl.random
@@ -191,6 +192,7 @@ def test_symmetry():
     lap_mat_dense = lap_mat.toarray()
     assert np.allclose(lap_mat_dense, lap_mat_dense.T)
 
+
 def test_out_of_range():
     # Create a graph
     graph = sgtl.graph.complete_graph(5)
@@ -265,3 +267,39 @@ def test_float_weights():
     assert graph.weight([0], [1]) == pytest.approx(2.2)
     assert graph.weight([0], [1, 2, 3]) == pytest.approx(3.2)
     assert graph.weight([0, 1], [0, 1]) == pytest.approx(4.8)
+
+
+def test_networkx():
+    # Test the methods for converting from and to networkx graphs.
+    # Start by constructing a networkx graph
+    netx_graph = networkx.generators.barbell_graph(4, 2)
+    graph = sgtl.Graph.from_networkx(netx_graph)
+
+    assert graph.number_of_vertices() == 9
+    assert graph.number_of_edges() == 14
+
+    expected_adjacency_matrix = sp.sparse.csr_matrix([[0, 1, 1, 1, 0, 0, 0, 0, 0],
+                                                      [1, 0, 1, 1, 0, 0, 0, 0, 0],
+                                                      [1, 1, 0, 1, 0, 0, 0, 0, 0],
+                                                      [1, 1, 1, 0, 1, 0, 0, 0, 0],
+                                                      [0, 0, 0, 1, 0, 1, 0, 0, 0],
+                                                      [0, 0, 0, 0, 1, 0, 1, 1, 1],
+                                                      [0, 0, 0, 0, 0, 1, 0, 1, 1],
+                                                      [0, 0, 0, 0, 0, 1, 1, 0, 1],
+                                                      [0, 0, 0, 0, 0, 1, 1, 1, 0]])
+    adj_mat_diff = (graph.adj_mat - expected_adjacency_matrix)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+
+    # Now, construct a graph using the sgtl Graph object, and convert it to networkx
+    graph = sgtl.Graph(expected_adjacency_matrix)
+    netx_graph = graph.to_networkx()
+
+    # Check that the networkx graph looks correct
+    assert netx_graph.number_of_nodes() == 9
+    assert netx_graph.number_of_edges() == 14
+    assert netx_graph.has_edge(0, 1)
+    assert netx_graph.has_edge(3, 4)
+    assert netx_graph.has_edge(4, 5)
+    assert not netx_graph.has_edge(2, 4)
+

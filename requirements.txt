@@ -4,3 +4,4 @@ pytest
 furo
 numpy
 pylint
+networkx
