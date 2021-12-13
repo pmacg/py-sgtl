@@ -5,3 +5,4 @@ furo
 numpy
 pylint
 networkx
+matplotlib

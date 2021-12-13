@@ -272,7 +272,7 @@ def test_float_weights():
 def test_networkx():
     # Test the methods for converting from and to networkx graphs.
     # Start by constructing a networkx graph
-    netx_graph = networkx.generators.barbell_graph(4, 2)
+    netx_graph = networkx.generators.barbell_graph(4, 1)
     graph = sgtl.Graph.from_networkx(netx_graph)
 
     assert graph.number_of_vertices() == 9
@@ -281,12 +281,12 @@ def test_networkx():
     expected_adjacency_matrix = sp.sparse.csr_matrix([[0, 1, 1, 1, 0, 0, 0, 0, 0],
                                                       [1, 0, 1, 1, 0, 0, 0, 0, 0],
                                                       [1, 1, 0, 1, 0, 0, 0, 0, 0],
-                                                      [1, 1, 1, 0, 1, 0, 0, 0, 0],
-                                                      [0, 0, 0, 1, 0, 1, 0, 0, 0],
-                                                      [0, 0, 0, 0, 1, 0, 1, 1, 1],
-                                                      [0, 0, 0, 0, 0, 1, 0, 1, 1],
-                                                      [0, 0, 0, 0, 0, 1, 1, 0, 1],
-                                                      [0, 0, 0, 0, 0, 1, 1, 1, 0]])
+                                                      [1, 1, 1, 0, 0, 0, 0, 0, 1],
+                                                      [0, 0, 0, 0, 0, 1, 1, 1, 1],
+                                                      [0, 0, 0, 0, 1, 0, 1, 1, 0],
+                                                      [0, 0, 0, 0, 1, 1, 0, 1, 0],
+                                                      [0, 0, 0, 0, 1, 1, 1, 0, 0],
+                                                      [0, 0, 0, 1, 1, 0, 0, 0, 0]])
     adj_mat_diff = (graph.adj_mat - expected_adjacency_matrix)
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
@@ -299,7 +299,7 @@ def test_networkx():
     assert netx_graph.number_of_nodes() == 9
     assert netx_graph.number_of_edges() == 14
     assert netx_graph.has_edge(0, 1)
-    assert netx_graph.has_edge(3, 4)
-    assert netx_graph.has_edge(4, 5)
-    assert not netx_graph.has_edge(2, 4)
+    assert netx_graph.has_edge(3, 8)
+    assert netx_graph.has_edge(8, 4)
+    assert not netx_graph.has_edge(2, 8)
 
