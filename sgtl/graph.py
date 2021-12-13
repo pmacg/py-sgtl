@@ -7,6 +7,7 @@ from typing import List
 import scipy
 import scipy.sparse
 import numpy as np
+import networkx as nx
 
 
 class Graph:
@@ -43,6 +44,34 @@ class Graph:
         self.inv_degrees = list(map(lambda x: 1 / x if x != 0 else 0, self.degrees))
         self.sqrt_degrees = list(map(math.sqrt, self.degrees))
         self.inv_sqrt_degrees = list(map(lambda x: 1 / x if x > 0 else 0, self.sqrt_degrees))
+
+    @staticmethod
+    def from_networkx(netx_graph: nx.Graph, edge_weight_attribute='weight'):
+        """
+        Given a networkx graph object, convert it to an SGTL graph object. Unless otherwise specified, this method
+        will use the 'weight' attribute on the networkx edges to assign the weight of the edges. If no such attribute
+        is present, the edges will be added with weight 1.
+
+        :param netx_graph: The networkx graph object to be converted.
+        :param edge_weight_attribute: (default 'weight') the edge attribute to be used to generate the edge weights.
+        :return: An SGTL graph which is equivalent to the given networkx graph.
+        """
+        return Graph(nx.adjacency_matrix(netx_graph, weight=edge_weight_attribute))
+
+    def to_networkx(self) -> nx.Graph:
+        """
+        Construct a networkx graph which is equivalent to this SGTL graph.
+        """
+        return nx.Graph(self.adj_mat)
+
+    def draw(self):
+        """
+        Plot the graph, by first converting to a networkx graph. This will use the default networkx plotting
+        functionality. If you'd like to do something more fancy, then you should convert the graph to a networkx graph
+        using the ``to_networkx`` method and use networkx directly.
+        """
+        nx_graph = self.to_networkx()
+        nx.draw(nx_graph)
 
     def number_of_vertices(self) -> int:
         """The number of vertices in the graph."""

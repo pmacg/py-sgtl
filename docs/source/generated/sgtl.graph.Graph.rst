@@ -20,6 +20,8 @@ sgtl.graph.Graph
       ~Graph.bipartiteness
       ~Graph.conductance
       ~Graph.degree_matrix
+      ~Graph.draw
+      ~Graph.from_networkx
       ~Graph.inverse_degree_matrix
       ~Graph.inverse_sqrt_degree_matrix
       ~Graph.laplacian_matrix
@@ -27,6 +29,7 @@ sgtl.graph.Graph
       ~Graph.number_of_edges
       ~Graph.number_of_vertices
       ~Graph.random_walk_laplacian_matrix
+      ~Graph.to_networkx
       ~Graph.total_volume
       ~Graph.volume
       ~Graph.weight

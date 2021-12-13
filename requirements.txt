@@ -4,3 +4,5 @@ pytest
 furo
 numpy
 pylint
+networkx
+matplotlib
