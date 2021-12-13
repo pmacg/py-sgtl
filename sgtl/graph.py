@@ -199,8 +199,13 @@ class Graph:
 
         :param vertex_set_s: a collection of vertex indices corresponding to the set S
         :return: The conductance :math:`\\phi(S)`
+        :raises ValueError: if the vertex set is empty
         """
         self._check_vert_num(vertex_set_s)
+
+        if len(vertex_set_s) == 0:
+            raise ValueError("The conductance of the empty set is undefined.")
+
         return 1 - (2 * self.weight(vertex_set_s, vertex_set_s, sets_are_equal=True)) / self.volume(vertex_set_s)
 
     def bipartiteness(self, vertex_set_l, vertex_set_r):
@@ -215,8 +220,13 @@ class Graph:
         :param vertex_set_l: a collection of vertex indices corresponding to the set L
         :param vertex_set_r: a collection of vertex indices corresponding to the set R
         :return: The bipartiteness ratio :math:`\\beta(L, R)`
+        :raises ValueError: if both vertex sets are empty
         """
         self._check_vert_num(vertex_set_l, vertex_set_r)
+
+        if len(vertex_set_l) + len(vertex_set_r) == 0:
+            raise ValueError("The bipartiteness of the empty set is undefined.")
+
         return 1 - 2 * self.weight(vertex_set_l, vertex_set_r) / self.volume(vertex_set_l + vertex_set_r)
 
     def _check_vert_num(self, *args):
