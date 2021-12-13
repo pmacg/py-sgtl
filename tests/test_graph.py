@@ -233,7 +233,7 @@ def test_num_edges():
     # Check the number of edges in the graph
     assert graph.number_of_vertices() == 10
     assert graph.number_of_edges() == 21
-    assert graph.total_volume() == 21
+    assert graph.total_volume() == 42
 
     # Now create a weighted graph and check the number of edges method.
     adjacency_matrix = scipy.sparse.csr_matrix([[0, 2, 0, 1],
@@ -243,7 +243,7 @@ def test_num_edges():
     graph = sgtl.Graph(adjacency_matrix)
     assert graph.number_of_vertices() == 4
     assert graph.number_of_edges() == 4
-    assert graph.total_volume() == 7
+    assert graph.total_volume() == 14
 
     # Test the number of edges for a graph with self-loops
     adjacency_matrix = scipy.sparse.csr_matrix([[0, 2, 0, 1],
@@ -253,7 +253,7 @@ def test_num_edges():
     graph = sgtl.Graph(adjacency_matrix)
     assert graph.number_of_vertices() == 4
     assert graph.number_of_edges() == 5
-    assert graph.total_volume() == 9
+    assert graph.total_volume() == 16
 
     # Add more self-loops to a graph
     adjacency_matrix = scipy.sparse.csr_matrix([[0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
@@ -270,7 +270,7 @@ def test_num_edges():
     graph = sgtl.Graph(adjacency_matrix)
     assert graph.number_of_vertices() == 10
     assert graph.number_of_edges() == 24
-    assert graph.total_volume() == 26.5
+    assert graph.total_volume() == 49
 
 
 def test_float_weights():
@@ -282,7 +282,7 @@ def test_float_weights():
     graph = sgtl.Graph(adjacency_matrix)
     assert graph.number_of_vertices() == 4
     assert graph.number_of_edges() == 5
-    assert graph.total_volume() == pytest.approx(9.99)
+    assert graph.total_volume() == pytest.approx(17.38)
 
     # Check the weight between vertex sets
     assert graph.weight([0], [1]) == pytest.approx(2.2)

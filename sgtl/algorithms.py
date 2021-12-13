@@ -1,24 +1,23 @@
 """
 A collection of spectral graph algorithms.
 """
-import numpy as np
-import scipy as sp
-import scipy.sparse.linalg
 from typing import Tuple, List, Set
+import numpy as np
+import scipy.sparse.linalg
 
 import sgtl
 
 
-def _sweep_set(graph: sgtl.Graph, v: List[float]) -> Tuple[Set[int], Set[int]]:
+def _sweep_set(graph: sgtl.Graph, vector: List[float]) -> Tuple[Set[int], Set[int]]:
     """
     Given an SGTL graph and a vector, use the sweep set algorithm to find a sparse cut in the graph.
 
     :param graph: The graph on which to operate.
-    :param v: The vector on which to sweep.
+    :param vector: The vector on which to sweep.
     :return: The set of vertices corresponding to the optimal cut
     """
     # Calculate n here once
-    n = graph.number_of_vertices()
+    num_vertices = graph.number_of_vertices()
 
     # Keep track of the best cut so far
     best_cut_index = None
@@ -28,29 +27,27 @@ def _sweep_set(graph: sgtl.Graph, v: List[float]) -> Tuple[Set[int], Set[int]]:
     # straightforward
     total_volume = graph.total_volume()
     set_volume = 0.0
-    set_size = 0
     cut_weight = 0.0
 
     # Normalise the vector with the degrees of each vertex
     degree_matrix = graph.degree_matrix()
-    v = degree_matrix.power(-(1 / 2)).dot(v)
+    vector = degree_matrix.power(-(1 / 2)).dot(vector)
 
     # First, sort the vertices based on their value in the given vector
-    sorted_vertices = [i for i, v in sorted(enumerate(v), key=(lambda y: y[1]))]
+    sorted_vertices = [i for i, _ in sorted(enumerate(vector), key=(lambda y: y[1]))]
 
     # Keep track of which edges to add/subtract from the cut each time
-    x = np.ones(n)
+    edges_to_add = np.ones(num_vertices)
 
     # Loop through the vertices in the graph
-    for (i, v) in enumerate(sorted_vertices[:-1]):
+    for (i, vertex) in enumerate(sorted_vertices[:-1]):
         # Update the set size and cut weight
-        set_volume += graph.degrees[v]
-        set_size += 1
+        set_volume += graph.degrees[vertex]
 
         # From now on, edges to this vertex will be removed from the cut at each iteration.
-        x[v] = -1
+        edges_to_add[vertex] = -1
 
-        additional_weight = graph.adjacency_matrix[v, :].dot(x)
+        additional_weight = graph.adjacency_matrix[vertex, :].dot(edges_to_add)
         cut_weight += additional_weight
 
         # Calculate the conductance
@@ -62,7 +59,7 @@ def _sweep_set(graph: sgtl.Graph, v: List[float]) -> Tuple[Set[int], Set[int]]:
             best_conductance = this_conductance
 
     # Return the best cut
-    return set(sorted_vertices[:best_cut_index + 1]), set(sorted_vertices[best_cut_index + 1:n])
+    return set(sorted_vertices[:best_cut_index + 1]), set(sorted_vertices[best_cut_index + 1:num_vertices])
 
 
 def cheeger_cut(graph: sgtl.Graph) -> Tuple[Set[int], Set[int]]:
@@ -74,6 +71,7 @@ def cheeger_cut(graph: sgtl.Graph) -> Tuple[Set[int], Set[int]]:
     :return: Two sets containing the vertices on each side of the cheeger cut.
 
     :Example:
+
     >>> import sgtl.graph
     >>> import sgtl.algorithms
     >>> graph = sgtl.graph.path_graph(10)
@@ -84,7 +82,7 @@ def cheeger_cut(graph: sgtl.Graph) -> Tuple[Set[int], Set[int]]:
     """
     # Compute the second smallest eigenvalue of the laplacian matrix
     laplacian_matrix = graph.normalised_laplacian_matrix()
-    eig_vals, eig_vecs = sp.sparse.linalg.eigsh(laplacian_matrix, which="SM", k=2)
+    _, eig_vecs = scipy.sparse.linalg.eigsh(laplacian_matrix, which="SM", k=2)
     v_2 = eig_vecs[:, 1]
 
     # Perform the sweep set operation to find the sparsest cut

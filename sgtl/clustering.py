@@ -1,11 +1,11 @@
 """
 Various graph clustering algorithms based on spectral graph theory.
 """
+from typing import List
 import scipy
 import scipy.sparse
 import scipy.sparse.linalg
 from sklearn.cluster import KMeans
-from typing import List
 
 import sgtl
 
