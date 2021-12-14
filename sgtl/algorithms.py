@@ -76,7 +76,7 @@ def cheeger_cut(graph: sgtl.Graph) -> Tuple[Set[int], Set[int]]:
     >>> import sgtl.algorithms
     >>> graph = sgtl.graph.path_graph(10)
     >>> cut = sgtl.algorithms.cheeger_cut(graph)
-    >>> sorted(cut)
+    >>> sorted(cut, key=(lambda x: min(x)))
     [{0, 1, 2, 3, 4}, {5, 6, 7, 8, 9}]
 
     """
