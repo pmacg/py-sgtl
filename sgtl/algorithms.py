@@ -47,7 +47,7 @@ def _sweep_set(graph: sgtl.Graph, vector: List[float]) -> Tuple[Set[int], Set[in
         # From now on, edges to this vertex will be removed from the cut at each iteration.
         edges_to_add[vertex] = -1
 
-        additional_weight = graph.adjacency_matrix[vertex, :].dot(edges_to_add)
+        additional_weight = graph.adjacency_matrix()[vertex, :].dot(edges_to_add)
         cut_weight += additional_weight
 
         # Calculate the conductance

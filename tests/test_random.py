@@ -40,7 +40,7 @@ def test_sbm():
     graph = sgtl.random.ssbm(n, 4, p, q)
 
     # The adjacency matrix should be symmetric
-    sym_diff = (graph.adjacency_matrix - graph.adjacency_matrix.transpose())
+    sym_diff = (graph.adjacency_matrix() - graph.adjacency_matrix().transpose())
     sym_diff.eliminate_zeros()
     assert sym_diff.nnz == 0
 
