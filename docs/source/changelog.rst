@@ -6,7 +6,8 @@ Unreleased
 
 Added
 ~~~~~
-* Added `Graph.adjacency_matrix()` method.
+* Added ``Graph.adjacency_matrix()`` method.
+* `Issue #29 <https://github.com/pmacg/py-sgtl/issues/29>`_ - add spectrum methods for adjacency and laplacian matrices.
 
 0.4 - 2021-12-14
 ----------------

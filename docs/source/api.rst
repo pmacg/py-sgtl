@@ -7,6 +7,7 @@ API
    :recursive:
 
    sgtl.graph
+   sgtl.spectrum
    sgtl.clustering
    sgtl.algorithms
    sgtl.random
