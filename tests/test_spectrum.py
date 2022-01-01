@@ -40,6 +40,25 @@ def test_laplacian_spectrum():
     assert spectrum[0] == pytest.approx(10)
 
 
+def test_normalised_laplacian_spectrum():
+    # Check the spectrum of a complete graph.
+    graph = sgtl.graph.complete_graph(10)
+    spectrum = sorted(sgtl.spectrum.normalised_laplacian_spectrum(graph))
+
+    assert spectrum[0] == pytest.approx(0)
+    assert spectrum[2] == pytest.approx(10/9)
+    assert spectrum[9] == pytest.approx(10/9)
+
+    # Check that we get the correct number of eigenvalues, and that we can request from either end of the spectrum.
+    spectrum = sgtl.spectrum.normalised_laplacian_spectrum(graph, num_eigenvalues=3)
+    assert len(spectrum) == 3
+    assert spectrum[0] == pytest.approx(0)      # By default, we take from the 'bottom end' of the spectrum.
+
+    spectrum = sgtl.spectrum.normalised_laplacian_spectrum(graph, num_eigenvalues=4, magnitude='largest')
+    assert len(spectrum) == 4
+    assert spectrum[0] == pytest.approx(10/9)
+
+
 def test_compare_spectra():
     # Test that the adjacency and laplacian spectra relate in the way we'd expect.
     graph = sgtl.graph.cycle_graph(10)
