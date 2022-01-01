@@ -34,8 +34,8 @@ class Graph:
         """
         # The graph is represented by the sparse adjacency matrix. We store the adjacency matrix in two sparse formats.
         # We can assume that there are no non-zero entries in the stored adjacency matrix.
-        self.adjacency_matrix = adj_mat.tocsr()
-        self.adjacency_matrix.eliminate_zeros()
+        self.adj_mat = adj_mat.tocsr()
+        self.adj_mat.eliminate_zeros()
         self.lil_adj_mat = adj_mat.tolil()
 
         # For convenience, and to speed up operations on the graph, we precompute the degrees of the vertices in the
@@ -62,7 +62,7 @@ class Graph:
         """
         Construct a networkx graph which is equivalent to this SGTL graph.
         """
-        return nx.Graph(self.adjacency_matrix)
+        return nx.Graph(self.adjacency_matrix())
 
     def draw(self):
         """
@@ -75,7 +75,7 @@ class Graph:
 
     def number_of_vertices(self) -> int:
         """The number of vertices in the graph."""
-        return self.adjacency_matrix.shape[0]
+        return self.adjacency_matrix().shape[0]
 
     def total_volume(self) -> float:
         """The total volume of the graph."""
@@ -83,15 +83,15 @@ class Graph:
 
     def _number_of_self_loops(self) -> int:
         """Get the number of self-loops in the graph."""
-        return np.count_nonzero(self.adjacency_matrix.diagonal())
+        return np.count_nonzero(self.adjacency_matrix().diagonal())
 
     def _volume_of_self_loops(self) -> float:
         """Get the total weight of all self-loops in the graph."""
-        return float(np.sum(self.adjacency_matrix.diagonal()))
+        return float(np.sum(self.adjacency_matrix().diagonal()))
 
     def number_of_edges(self) -> int:
         """The number of edges in the graph, ignoring any weights."""
-        return int((self.adjacency_matrix.nnz + self._number_of_self_loops()) / 2)
+        return int((self.adjacency_matrix().nnz + self._number_of_self_loops()) / 2)
 
     def degree_matrix(self):
         """Construct the diagonal degree matrix of the graph."""
@@ -108,6 +108,12 @@ class Graph:
         return scipy.sparse.spdiags(self.inv_sqrt_degrees, [0], self.number_of_vertices(), self.number_of_vertices(),
                                     format="csr")
 
+    def adjacency_matrix(self):
+        """
+        Return the Adjacency matrix of the graph.
+        """
+        return self.adj_mat
+
     def laplacian_matrix(self):
         """
         Construct the Laplacian matrix of the graph. The Laplacian matrix is defined to be
@@ -117,7 +123,7 @@ class Graph:
 
         where D is the diagonal degree matrix and A is the adjacency matrix of the graph.
         """
-        return self.degree_matrix() - self.adjacency_matrix
+        return self.degree_matrix() - self.adjacency_matrix()
 
     def normalised_laplacian_matrix(self):
         """
@@ -178,13 +184,13 @@ class Graph:
         # self-loops
         if sets_are_equal:
             weight_to_remove = raw_weight / 2
-            weight_to_remove -= sum([self.adjacency_matrix[i, i] for i in vertex_set_l]) / 2
+            weight_to_remove -= sum([self.adjacency_matrix()[i, i] for i in vertex_set_l]) / 2
         elif not check_for_overlap:
             weight_to_remove = 0
         else:
             overlap = set.intersection(set(vertex_set_l), set(vertex_set_r))
             weight_to_remove = self.lil_adj_mat[list(overlap)][:, list(overlap)].sum() / 2
-            weight_to_remove -= sum([self.adjacency_matrix[i, i] for i in overlap]) / 2
+            weight_to_remove -= sum([self.adjacency_matrix()[i, i] for i in overlap]) / 2
 
         # Return the corrected weight
         return raw_weight - weight_to_remove
@@ -251,7 +257,7 @@ def complete_graph(number_of_vertices: int) -> Graph:
 
        >>> import sgtl.graph
        >>> graph = sgtl.graph.complete_graph(4)
-       >>> graph.adjacency_matrix.toarray()
+       >>> graph.adjacency_matrix().toarray()
        array([[0., 1., 1., 1.],
               [1., 0., 1., 1.],
               [1., 1., 0., 1.],
@@ -278,7 +284,7 @@ def cycle_graph(number_of_vertices: int) -> Graph:
 
        >>> import sgtl.graph
        >>> graph = sgtl.graph.cycle_graph(5)
-       >>> graph.adjacency_matrix.toarray()
+       >>> graph.adjacency_matrix().toarray()
        array([[0., 1., 0., 0., 1.],
               [1., 0., 1., 0., 0.],
               [0., 1., 0., 1., 0.],
@@ -310,7 +316,7 @@ def star_graph(number_of_vertices: int) -> Graph:
 
        >>> import sgtl.graph
        >>> graph = sgtl.graph.star_graph(4)
-       >>> graph.adjacency_matrix.toarray()
+       >>> graph.adjacency_matrix().toarray()
        array([[0., 1., 1., 1.],
               [1., 0., 0., 0.],
               [1., 0., 0., 0.],
@@ -340,7 +346,7 @@ def path_graph(number_of_vertices: int) -> Graph:
 
        >>> import sgtl.graph
        >>> graph = sgtl.graph.path_graph(5)
-       >>> graph.adjacency_matrix.toarray()
+       >>> graph.adjacency_matrix().toarray()
        array([[0., 1., 0., 0., 0.],
               [1., 0., 1., 0., 0.],
               [0., 1., 0., 1., 0.],

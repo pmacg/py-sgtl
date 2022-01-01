@@ -17,6 +17,7 @@ sgtl.graph.Graph
    .. autosummary::
    
       ~Graph.__init__
+      ~Graph.adjacency_matrix
       ~Graph.bipartiteness
       ~Graph.conductance
       ~Graph.degree_matrix

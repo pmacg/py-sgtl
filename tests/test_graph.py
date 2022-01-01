@@ -70,7 +70,7 @@ def test_complete_graph():
     expected_adjacency_matrix = sp.sparse.csr_matrix([[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]])
 
     assert graph.number_of_vertices() == 4
-    adj_mat_diff = (graph.adjacency_matrix - expected_adjacency_matrix)
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adjacency_matrix)
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
 
@@ -92,7 +92,7 @@ def test_cycle_graph():
                                                       [1, 0, 0, 1, 0]])
 
     assert graph.number_of_vertices() == 5
-    adj_mat_diff = (graph.adjacency_matrix - expected_adjacency_matrix)
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adjacency_matrix)
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
 
@@ -114,7 +114,7 @@ def test_star_graph():
                                                       [1, 0, 0, 0, 0]])
 
     assert graph.number_of_vertices() == 5
-    adj_mat_diff = (graph.adjacency_matrix - expected_adjacency_matrix)
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adjacency_matrix)
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
 
@@ -136,7 +136,7 @@ def test_path_graph():
                                                       [0, 0, 0, 1, 0]])
 
     assert graph.number_of_vertices() == 5
-    adj_mat_diff = (graph.adjacency_matrix - expected_adjacency_matrix)
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adjacency_matrix)
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
 
@@ -147,6 +147,13 @@ def test_path_graph():
         _ = sgtl.graph.complete_graph(-10)
     with pytest.raises(ValueError):
         _ = sgtl.graph.complete_graph(0)
+
+
+def test_adjacency_matrix():
+    graph = sgtl.Graph(BARBELL5_ADJ_MAT)
+    adj_mat_diff = (graph.adjacency_matrix() - BARBELL5_ADJ_MAT)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
 
 
 def test_volume():
@@ -184,7 +191,7 @@ def test_symmetry():
     big_graph = sgtl.random.ssbm(1000, 5, 0.8, 0.2)
 
     # Check that all of the graph matrices are truly symmetric
-    assert np.allclose(big_graph.adjacency_matrix.toarray(), big_graph.adjacency_matrix.toarray().T)
+    assert np.allclose(big_graph.adjacency_matrix().toarray(), big_graph.adjacency_matrix().toarray().T)
 
     lap_mat = big_graph.normalised_laplacian_matrix()
     lap_mat_dense = lap_mat.toarray()
@@ -308,7 +315,7 @@ def test_networkx():
                                                       [0, 0, 0, 0, 1, 1, 0, 1, 0],
                                                       [0, 0, 0, 0, 1, 1, 1, 0, 0],
                                                       [0, 0, 0, 1, 1, 0, 0, 0, 0]])
-    adj_mat_diff = (graph.adjacency_matrix - expected_adjacency_matrix)
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adjacency_matrix)
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
 

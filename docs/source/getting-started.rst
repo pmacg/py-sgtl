@@ -35,7 +35,7 @@ For example:
 
     >>> import sgtl.graph
     >>> graph = sgtl.graph.cycle_graph(5)
-    >>> graph.adjacency_matrix.toarray()
+    >>> graph.adjacency_matrix().toarray()
     array([[0., 1., 0., 0., 1.],
            [1., 0., 1., 0., 0.],
            [0., 1., 0., 1., 0.],
@@ -47,7 +47,7 @@ For example:
 
     >>> import sgtl.graph
     >>> graph = sgtl.graph.cycle_graph(5)
-    >>> graph.adjacency_matrix.toarray()
+    >>> graph.adjacency_matrix().toarray()
     array([[0., 1., 0., 0., 1.],
            [1., 0., 1., 0., 0.],
            [0., 1., 0., 1., 0.],
@@ -59,7 +59,7 @@ For example:
 
     >>> import sgtl.graph
     >>> graph = sgtl.graph.cycle_graph(5)
-    >>> graph.adjacency_matrix.toarray()
+    >>> graph.adjacency_matrix().toarray()
     array([[0., 1., 0., 0., 1.],
            [1., 0., 1., 0., 0.],
            [0., 1., 0., 1., 0.],

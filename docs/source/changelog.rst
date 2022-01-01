@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+Added
+~~~~~
+* Added `Graph.adjacency_matrix()` method.
+
 0.4 - 2021-12-14
 ----------------
 
