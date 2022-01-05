@@ -378,6 +378,7 @@ def knn_graph(data: np.ndarray, k: int):
       - d is the dimensionality of each data point
       - n is the number of data points
       - k is the parameter k in the knn graph
+
     This is likely to be dominated by the :math:`O(n k)` term.
 
     :param data: the data to construct the graph from
