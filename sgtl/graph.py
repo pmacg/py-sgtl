@@ -360,3 +360,22 @@ def path_graph(number_of_vertices: int) -> Graph:
     # Generate the cycle graph adjacency matrix
     adj_mat = scipy.sparse.diags([np.ones(number_of_vertices - 1), np.ones(number_of_vertices - 1)], [-1, 1])
     return Graph(adj_mat)
+
+
+def knn_graph(data: np.ndarray, k: int):
+    """
+    Construct the k-nearest neighbours graph from the given data.
+
+    The ``data`` paramenter must have two dimensions. If ``data`` has dimension (n, d), then the resulting graph will
+    have ``n`` vertices. Each vertex will be connected to the ``k`` vertices which are closest to it in the dataset.
+    Notice that this does **not** necessarily result in a ``k``-regular graph since neighbours may or may not be
+    mutually within the ``k`` nearest.
+
+    The graph will have at most n * k edges.
+
+    :param data: the data to construct the graph from
+    :param k: how many neighbours to connect to
+    :return: An ``sgtl.Graph`` object representing the ``k``-nearest neighbour graph of the input.
+    """
+    # TODO: implement this!
+    return cycle_graph(len(data))
