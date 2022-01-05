@@ -16,6 +16,7 @@
    
       complete_graph
       cycle_graph
+      knn_graph
       path_graph
       star_graph
    

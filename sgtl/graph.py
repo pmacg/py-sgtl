@@ -6,6 +6,7 @@ from typing import List
 
 import scipy
 import scipy.sparse
+from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import networkx as nx
 
@@ -359,4 +360,40 @@ def path_graph(number_of_vertices: int) -> Graph:
 
     # Generate the cycle graph adjacency matrix
     adj_mat = scipy.sparse.diags([np.ones(number_of_vertices - 1), np.ones(number_of_vertices - 1)], [-1, 1])
+    return Graph(adj_mat)
+
+
+def knn_graph(data: np.ndarray, k: int):
+    """
+    Construct the k-nearest neighbours graph from the given data.
+
+    The ``data`` paramenter must have two dimensions. If ``data`` has dimension (n, d), then the resulting graph will
+    have ``n`` vertices. Each vertex will be connected to the ``k`` vertices which are closest to it in the dataset.
+    Notice that this does **not** necessarily result in a ``k``-regular graph since neighbours may or may not be
+    mutually within the ``k`` nearest.
+
+    The graph will have at most n * k edges.
+
+    The running time of this construction is :math:`O\\left(d \\log(n) + n k\\right)` where
+      - d is the dimensionality of each data point
+      - n is the number of data points
+      - k is the parameter k in the knn graph
+
+    This is likely to be dominated by the :math:`O(n k)` term.
+
+    :param data: the data to construct the graph from
+    :param k: how many neighbours to connect to
+    :return: An ``sgtl.Graph`` object representing the ``k``-nearest neighbour graph of the input.
+    """
+    # Create the nearest neighbours for each vertex using sklearn
+    _, neighbours = NearestNeighbors(n_neighbors=(k+1)).fit(data).kneighbors(data)
+
+    # Now, let's construct the adjacency matrix of the graph iteratively
+    adj_mat = scipy.sparse.lil_matrix((len(data), len(data)))
+    for vertex in range(len(data)):
+        # Get the k nearest neighbours of this vertex
+        for neighbour in neighbours[vertex][1:]:
+            adj_mat[vertex, neighbour] = 1
+            adj_mat[neighbour, vertex] = 1
+
     return Graph(adj_mat)

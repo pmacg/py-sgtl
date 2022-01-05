@@ -8,6 +8,7 @@ Added
 ~~~~~
 * Added ``Graph.adjacency_matrix()`` method.
 * `Issue #29 <https://github.com/pmacg/py-sgtl/issues/29>`_ - add spectrum methods for adjacency and laplacian matrices.
+* `Issue #35 <https://github.com/pmacg/py-sgtl/issues/35>`_ - add method to construct k nearest neighbour graph.
 
 0.4 - 2021-12-14
 ----------------
