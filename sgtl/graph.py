@@ -2,7 +2,7 @@
 Provides the Graph object, which is our core representation of a graph within the SGTL library.
 """
 import math
-from typing import List
+from typing import List, Optional
 
 import scipy
 import scipy.sparse
@@ -318,25 +318,25 @@ class LabelledGraph(Graph):
         elif vertex_names is not None:
             raise TypeError("Vertex names should be given as a list or dictionary.")
 
-    def update_vertex_name(self, vertex_id: int, new_name: str):
+    def update_vertex_label(self, vertex_id: int, new_label: str):
         """
         Update the label of the specified vertex.
 
         :param vertex_id: the index of the vertex to re-label.
-        :param new_name: the new name to attach to the vertex.
+        :param new_label: the new label to attach to the vertex.
         :return: nothing.
         :raises ValueError: if the given vertex name is not unique.
         """
-        if type(vertex_id) is not int or type(new_name) is not str:
+        if type(vertex_id) is not int or type(new_label) is not str:
             raise TypeError("Must pass vertex id as an int and name as a str.")
 
         old_name = None
         if vertex_id in self._vertex_to_name:
             old_name = self._vertex_to_name[vertex_id]
 
-        if old_name != new_name:
+        if old_name != new_label:
             # We don't have anything to do unless the new name is different to the existing one.
-            if new_name in self._name_to_vertex:
+            if new_label in self._name_to_vertex:
                 raise ValueError("The given vertex name is not unique.")
 
             # Delete the old name if it exists
@@ -344,8 +344,26 @@ class LabelledGraph(Graph):
                 del self._name_to_vertex[old_name]
 
             # Update the name dictionaries
-            self._name_to_vertex[new_name] = vertex_id
-            self._vertex_to_name[vertex_id] = new_name
+            self._name_to_vertex[new_label] = vertex_id
+            self._vertex_to_name[vertex_id] = new_label
+
+    def vertex_label(self, vertex_id: int) -> Optional[str]:
+        """
+        Given a vertex id, return the label of that vertex.
+
+        :param vertex_id: the index of the vertex
+        :return: the label of the vertex, or None if there is no label
+        """
+        return self._vertex_to_name[vertex_id] if vertex_id in self._vertex_to_name else None
+
+    def vertex_id(self, vertex_label: str) -> Optional[str]:
+        """
+        Given a vertex label, return the id of that vertex.
+
+        :param vertex_label: the label of the vertex
+        :return: the id of the vertex, or None if there is no vertex with the given label
+        """
+        return self._name_to_vertex[vertex_label] if vertex_label in self._name_to_vertex else None
 
     def _check_labels(self, vertex_list) -> List[int]:
         """
