@@ -46,6 +46,18 @@ class Graph:
         self.sqrt_degrees = list(map(math.sqrt, self.degrees))
         self.inv_sqrt_degrees = list(map(lambda x: 1 / x if x > 0 else 0, self.sqrt_degrees))
 
+    def _check_labels(self, vertex_list) -> List[int]:
+        """
+        Given a list of vertices, check whether the list is given as a list of integer indices, or as vertex names.
+        If the list is a list of strings, convert it to a list of vertex indices.
+
+        Note that on the base Graph object, this is a noop.
+
+        :param vertex_list:
+        :return:
+        """
+        return vertex_list
+
     @staticmethod
     def from_networkx(netx_graph: nx.Graph, edge_weight_attribute='weight'):
         """
@@ -152,15 +164,16 @@ class Graph:
         """
         Given a set of vertices, compute the volume of the set.
 
-        :param vertex_set: an iterable collection of vertex indices
+        :param vertex_set: an iterable collection of vertex indices (or labels)
         :return: The volume of vertex_set
         """
+        vertex_set = self._check_labels(vertex_set)
         self._check_vert_num(vertex_set)
         return sum([self.degrees[v] for v in vertex_set])
 
     def weight(self,
-               vertex_set_l: List[int],
-               vertex_set_r: List[int],
+               vertex_set_l,
+               vertex_set_r,
                check_for_overlap=True,
                sets_are_equal=False) -> float:
         """
@@ -172,13 +185,17 @@ class Graph:
         * if the caller can guarantee that the sets do not overlap, then set ``check_for_overlap=False``
         * if the caller can guarantee that the sets are equal, then set ``sets_are_equal=True``
 
-        :param vertex_set_l: a collection of vertex indices corresponding to the set L
-        :param vertex_set_r: a collection of vertex indices corresponding to the set R
+        :param vertex_set_l: a collection of vertex indices (or labels) corresponding to the set L
+        :param vertex_set_r: a collection of vertex indices (or labels) corresponding to the set R
         :param check_for_overlap: set to ``False`` if the given sets are guaranteed not to overlap
         :param sets_are_equal: set to ``True`` if the given sets are guaranteed to be equal
         :return: The weight w(L, R)
         """
+        vertex_set_l = self._check_labels(vertex_set_l)
+        vertex_set_r = self._check_labels(vertex_set_r)
         self._check_vert_num(vertex_set_l, vertex_set_r)
+
+        # Get the naive weight of this cut
         raw_weight = self.lil_adj_mat[vertex_set_l][:, vertex_set_r].sum()
 
         # If the two sets L and R overlap, we will have double counted any edges inside this overlap, save for the
@@ -208,6 +225,7 @@ class Graph:
         :return: The conductance :math:`\\phi(S)`
         :raises ValueError: if the vertex set is empty
         """
+        vertex_set_s = self._check_labels(vertex_set_s)
         self._check_vert_num(vertex_set_s)
 
         if len(vertex_set_s) == 0:
@@ -229,6 +247,8 @@ class Graph:
         :return: The bipartiteness ratio :math:`\\beta(L, R)`
         :raises ValueError: if both vertex sets are empty
         """
+        vertex_set_l = self._check_labels(vertex_set_l)
+        vertex_set_r = self._check_labels(vertex_set_r)
         self._check_vert_num(vertex_set_l, vertex_set_r)
 
         if len(vertex_set_l) + len(vertex_set_r) == 0:
@@ -244,6 +264,105 @@ class Graph:
             for vert in arg:
                 if vert >= self.number_of_vertices():
                     raise IndexError("Input vertex set includes indices larger than the number of vertices.")
+
+
+class LabelledGraph(Graph):
+    """
+    Extends the basic Graph object to vertices to be associated with additional data. In particular, it allows vertices
+    to be named. It is not required that every vertex is associated with a name, but all names must be unique.
+
+    In addition to allowing names, each vertex will be associated with a dictionary of key-value pairs which can contain
+    arbitrary data.
+    """
+
+    def __init__(self, adj_mat, vertex_names=None):
+        """
+        Initialise a labelled graph. The adjacency matrix is passed as a sparse array in the same way as for the base
+        graph object.
+
+        Then, the caller can optionally specify names for some or all of the vertices. There are two ways to do this:
+          - Pass a list of names. The list should have the same length as the number of vertices. This will name every
+            vertex in the graph.
+          - Pass a dictionary of (vertex_id, name) pairs. The vertex_id is the integer index of each vertex to be named
+            and the name should be a string.
+
+        :param adj_mat:
+        :param vertex_names:
+        """
+        super(LabelledGraph, self).__init__(adj_mat)
+
+        # Unpack the vertex names that we have been given.
+        self._name_to_vertex = {}
+        self._vertex_to_name = {}
+        if type(vertex_names) is list:
+            # If we have been given a list of names, it should be the same length as the number of vertices, and should
+            # assign a name to every vertex.
+            if len(vertex_names) != self.number_of_vertices():
+                raise ValueError("Length of vertex name list must be equal to the number of vertices.")
+            for i, name in enumerate(vertex_names):
+                # Check whether this name is already in the name dictionary
+                if name in self._name_to_vertex:
+                    raise ValueError("All vertex names must be unique.")
+                self._name_to_vertex[name] = i
+                self._vertex_to_name[i] = name
+        elif type(vertex_names) is dict:
+            # If we have been given a dictionary of vertex names, the keys should be the indices of the vertices, and
+            # the values should be the names to apply
+            for vertex, name in vertex_names.items():
+                if type(vertex) is not int or type(name) is not str:
+                    raise TypeError("Dictionary of vertex names must have integer keys and string values.")
+                if name in self._name_to_vertex:
+                    raise ValueError("All vertex names must be unique.")
+                self._name_to_vertex[name] = vertex
+                self._vertex_to_name[vertex] = name
+        elif vertex_names is not None:
+            raise TypeError("Vertex names should be given as a list or dictionary.")
+
+    def update_vertex_name(self, vertex_id: int, new_name: str):
+        """
+        Update the label of the specified vertex.
+
+        :param vertex_id: the index of the vertex to re-label.
+        :param new_name: the new name to attach to the vertex.
+        :return: nothing.
+        :raises ValueError: if the given vertex name is not unique.
+        """
+        if type(vertex_id) is not int or type(new_name) is not str:
+            raise TypeError("Must pass vertex id as an int and name as a str.")
+
+        old_name = None
+        if vertex_id in self._vertex_to_name:
+            old_name = self._vertex_to_name[vertex_id]
+
+        if old_name != new_name:
+            # We don't have anything to do unless the new name is different to the existing one.
+            if new_name in self._name_to_vertex:
+                raise ValueError("The given vertex name is not unique.")
+
+            # Delete the old name if it exists
+            if old_name is not None:
+                del self._name_to_vertex[old_name]
+
+            # Update the name dictionaries
+            self._name_to_vertex[new_name] = vertex_id
+            self._vertex_to_name[vertex_id] = new_name
+
+    def _check_labels(self, vertex_list) -> List[int]:
+        """
+        In the LabelledGraph object, check whether the given vertex list has been given as a list of labels or indices.
+
+        :param vertex_list: A list of vertices, as indices or labels.
+        :return: The list of vertices as indices
+        """
+        if type(vertex_list) is int:
+            # The list is already given as indices. Return it.
+            return vertex_list
+        elif type(vertex_list) is str:
+            # The list is given as labels - convert them to indices.
+            return [self._name_to_vertex[name] for name in vertex_list]
+        else:
+            # The list is not given as either indices or labels - this is an error.
+            raise TypeError("The vertex list must contain either vertex indices or their labels.")
 
 
 def complete_graph(number_of_vertices: int) -> Graph:
