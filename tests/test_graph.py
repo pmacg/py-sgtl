@@ -335,13 +335,30 @@ def test_networkx():
 def test_knn_graph():
     # Let's construct some data where we can calculate the knn graph by hand.
     raw_data = np.asarray([[1, 1], [4, 1], [1, 2], [2, 2], [2, 3]])
-    expected_adj_mat = sp.sparse.csr_matrix([[0, 1, 1, 1, 0],
-                                             [1, 0, 0, 1, 0],
+    expected_adj_mat = sp.sparse.csr_matrix([[0, 0, 1, 1, 0],
+                                             [0, 0, 0, 1, 1],
                                              [1, 0, 0, 1, 1],
                                              [1, 1, 1, 0, 1],
-                                             [0, 0, 1, 1, 0]])
+                                             [0, 1, 1, 1, 0]])
     graph = sgtl.graph.knn_graph(raw_data, 2)
 
     adj_mat_diff = (graph.adjacency_matrix() - expected_adj_mat)
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
+    assert graph.number_of_vertices() == 5
+
+    # Let's do one more, with k = 3 this time.
+    raw_data = np.asarray([[1, 1], [2, 1], [3, 1], [5, 1], [2, 2], [3, 2], [3, 4]])
+    expected_adj_mat = sp.sparse.csr_matrix([[0, 1, 1, 0, 1, 0, 0],
+                                             [1, 0, 1, 1, 1, 1, 0],
+                                             [1, 1, 0, 1, 1, 1, 1],
+                                             [0, 1, 1, 0, 0, 1, 0],
+                                             [1, 1, 1, 0, 0, 1, 1],
+                                             [0, 1, 1, 1, 1, 0, 1],
+                                             [0, 0, 1, 0, 1, 1, 0]])
+    graph = sgtl.graph.knn_graph(raw_data, 3)
+
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adj_mat)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+    assert graph.number_of_vertices() == 7

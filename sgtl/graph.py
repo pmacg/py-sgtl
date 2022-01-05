@@ -6,6 +6,7 @@ from typing import List
 
 import scipy
 import scipy.sparse
+from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import networkx as nx
 
@@ -373,9 +374,25 @@ def knn_graph(data: np.ndarray, k: int):
 
     The graph will have at most n * k edges.
 
+    The running time of this construction is :math:`O\\left(d \\log(n) + n k\\right)` where
+      - d is the dimensionality of each data point
+      - n is the number of data points
+      - k is the parameter k in the knn graph
+    This is likely to be dominated by the :math:`O(n k)` term.
+
     :param data: the data to construct the graph from
     :param k: how many neighbours to connect to
     :return: An ``sgtl.Graph`` object representing the ``k``-nearest neighbour graph of the input.
     """
-    # TODO: implement this!
-    return cycle_graph(len(data))
+    # Create the nearest neighbours for each vertex using sklearn
+    _, neighbours = NearestNeighbors(n_neighbors=(k+1)).fit(data).kneighbors(data)
+
+    # Now, let's construct the adjacency matrix of the graph iteratively
+    adj_mat = scipy.sparse.lil_matrix((len(data), len(data)))
+    for vertex in range(len(data)):
+        # Get the k nearest neighbours of this vertex
+        for neighbour in neighbours[vertex][1:]:
+            adj_mat[vertex, neighbour] = 1
+            adj_mat[neighbour, vertex] = 1
+
+    return Graph(adj_mat)
