@@ -9,6 +9,7 @@ import scipy.sparse
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import networkx as nx
+import pandas as pd
 
 
 class Graph:
@@ -396,4 +397,94 @@ def knn_graph(data: np.ndarray, k: int):
             adj_mat[vertex, neighbour] = 1
             adj_mat[neighbour, vertex] = 1
 
+    return Graph(adj_mat)
+
+
+def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) -> Graph:
+    """
+    Construct an ``sgtl.Graph`` object from an edgelist file.
+
+    The edgelist file represents a graph by specifying each edge in the graph on a separate line in the file.
+    Each line looks like
+        id1 id2 <weight>
+    where id1 and id2 are the vertex indices of the given edge, and an optional weight is given as a floating point
+    number. The file may also contain comment lines.
+
+    By default, the elements on a given line are assumed to be separated by spaces, and comments should begin with a
+    '#' character. These defaults can be changed by passing additional key-word arguments which will be passed to
+    pandas.read_csv.
+
+    :param filename: The edgelist filename.
+    :param directed: Whether the graph is directerd.
+    :param num_vertices: The number of vertices in the graph, if this is known in advance. Specifying this value will
+                         speed up the method.
+    :param kwargs: Key-word arguments to pass to the `pandas.read_csv` method which will be used to read in the file.
+                   This can be used to set a delimiter other than the space character, or to change the comment
+                   character.
+    :return: the constructed `sgtl.Graph` object
+    :raises TypeError: If the edgelist file cannot be parsed due to incorrect types.
+
+    :Example:
+
+    An example edgelist file is as follows::
+
+        # This is a comment line
+        0 1 0.5
+        1 2 1
+        2 0 0.5
+
+    The above file gives a weighted triangle graph.
+    """
+    # Set the default values of the parameters
+    if 'sep' not in kwargs:
+        kwargs['sep'] = ' '
+    if 'comment' not in kwargs:
+        kwargs['comment'] = '#'
+    if 'header' not in kwargs:
+        kwargs['header'] = None
+
+    # Read in the edgelist file, and create the adjacency matrix of the graph as we go
+    if num_vertices is None:
+        num_vertices = 1
+    adj_mat = scipy.sparse.lil_matrix((num_vertices, num_vertices))
+    maximum_node_index = num_vertices - 1
+    edgelist_data = pd.read_csv(filename, **kwargs)
+    for edge_row in edgelist_data.iterrows():
+        # Get the vertex indices from the edgelist file
+        v1 = edge_row[1][0]
+        v2 = edge_row[1][1]
+
+        if not isinstance(v1, np.integer) or not isinstance(v2, np.integer):
+            raise TypeError("Vertex indices must be given as integers in the edgelist file.")
+
+        # Check whether the weight of the edge is specified
+        if len(edge_row[1]) > 2:
+            weight = edge_row[1][2]
+        else:
+            weight = 1.0
+
+        if not isinstance(weight, np.float):
+            raise TypeError("Edge weights must be given as floating point numbers.")
+
+        # Update the size of the adjacency matrix if we have encountered a larger vertex index than previously.
+        if v1 > maximum_node_index or v2 > maximum_node_index:
+            old_maximum_node_index = maximum_node_index
+            maximum_node_index = max(v1, v2)
+
+            # Update the shape of the lil matrix
+            adj_mat._shape = (maximum_node_index + 1, maximum_node_index + 1)
+
+            # Add rows to the data elements of the lil matrix
+            for i in range(old_maximum_node_index + 1, maximum_node_index + 1):
+                adj_mat.rows = np.append(adj_mat.rows, 1)
+                adj_mat.rows[i] = []
+                adj_mat.data = np.append(adj_mat.data, 1)
+                adj_mat.data[i] = []
+
+        # Update the adjacency matrix with this edge.
+        adj_mat[v1, v2] = weight
+        if not directed:
+            adj_mat[v2, v1] = weight
+
+    # Construct the graph object and return it
     return Graph(adj_mat)
