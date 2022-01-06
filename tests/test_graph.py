@@ -363,6 +363,14 @@ def test_knn_graph():
     assert adj_mat_diff.nnz == 0
     assert graph.number_of_vertices() == 7
 
+    # Construct a knn graph with a sparse data matrix
+    raw_data = sp.sparse.csr_matrix(raw_data)
+    graph = sgtl.graph.knn_graph(raw_data, 3)
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adj_mat)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+    assert graph.number_of_vertices() == 7
+
 
 def test_edgelist():
     ##########
