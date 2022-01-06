@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+Added
+~~~~~
+* `Issue #25 <https://github.com/pmacg/py-sgtl/issues/25>`_ - add methods for reading and writing edgelist files
+
 0.4.1 - 2022-01-05
 ------------------
 

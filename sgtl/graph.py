@@ -405,8 +405,10 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
     Construct an ``sgtl.Graph`` object from an edgelist file.
 
     The edgelist file represents a graph by specifying each edge in the graph on a separate line in the file.
-    Each line looks like
+    Each line looks like::
+
         id1 id2 <weight>
+
     where id1 and id2 are the vertex indices of the given edge, and an optional weight is given as a floating point
     number. If any edge has a specified weight, then you must specify the weight for every edge. That is, every line
     in the edgelist must contain the same number of elements (either 2 or 3). The file may also contain comment lines.
@@ -438,7 +440,7 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
     """
     # Set the default values of the parameters
     if 'sep' not in kwargs:
-        kwargs['sep'] = '\s+'
+        kwargs['sep'] = r'\s+'
     if 'comment' not in kwargs:
         kwargs['comment'] = '#'
     if 'header' not in kwargs:
@@ -452,8 +454,8 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
     edgelist_data = pd.read_csv(filename, **kwargs)
     for edge_row in edgelist_data.iterrows():
         # Get the vertex indices from the edgelist file
-        v1 = int(edge_row[1][0])
-        v2 = int(edge_row[1][1])
+        vertex1 = int(edge_row[1][0])
+        vertex2 = int(edge_row[1][1])
 
         # Check whether the weight of the edge is specified
         if len(edge_row[1]) > 2:
@@ -461,16 +463,16 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
         else:
             weight = 1.0
 
-        if not isinstance(weight, np.float):
+        if not isinstance(weight, float):
             raise TypeError("Edge weights must be given as floating point numbers.")
 
         # Update the size of the adjacency matrix if we have encountered a larger vertex index than previously.
-        if v1 > maximum_node_index or v2 > maximum_node_index:
+        if vertex1 > maximum_node_index or vertex2 > maximum_node_index:
             old_maximum_node_index = maximum_node_index
-            maximum_node_index = max(v1, v2)
+            maximum_node_index = max(vertex1, vertex2)
 
             # Update the shape of the lil matrix
-            adj_mat._shape = (maximum_node_index + 1, maximum_node_index + 1)
+            adj_mat._shape = (maximum_node_index + 1, maximum_node_index + 1)       # pylint: disable=protected-access
 
             # Add rows to the data elements of the lil matrix
             for i in range(old_maximum_node_index + 1, maximum_node_index + 1):
@@ -480,9 +482,9 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
                 adj_mat.data[i] = []
 
         # Update the adjacency matrix with this edge.
-        adj_mat[v1, v2] = weight
+        adj_mat[vertex1, vertex2] = weight
         if not directed:
-            adj_mat[v2, v1] = weight
+            adj_mat[vertex2, vertex1] = weight
 
     # Construct the graph object and return it
     return Graph(adj_mat)
@@ -495,8 +497,8 @@ def to_edgelist(graph: Graph, filename: str):
     :param graph: the graph to be saved.
     :param filename: the edgelist filename.
     """
-    with open(filename, 'w') as fout:
+    with open(filename, 'w', encoding='utf-8') as fout:
         # Iterate through every edge in the graph, and add the edge to the edgelist.
         adj_mat = graph.adjacency_matrix().tocoo()
-        for v1, v2, weight in zip(adj_mat.row, adj_mat.col, adj_mat.data):
-            fout.write(f"{v1} {v2} {weight}\n")
+        for vertex1, vertex2, weight in zip(adj_mat.row, adj_mat.col, adj_mat.data):
+            fout.write(f"{vertex1} {vertex2} {weight}\n")

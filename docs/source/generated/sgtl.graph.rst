@@ -16,9 +16,11 @@
    
       complete_graph
       cycle_graph
+      from_edgelist
       knn_graph
       path_graph
       star_graph
+      to_edgelist
    
    
 
