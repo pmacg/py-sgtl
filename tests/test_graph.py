@@ -362,3 +362,38 @@ def test_knn_graph():
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
     assert graph.number_of_vertices() == 7
+
+
+def test_from_edgelist():
+    # Let's load the different test graphs, and check that we get what we'd expect.
+    expected_adj_mat = sp.sparse.csr_matrix([[0, 1, 1],
+                                             [1, 0, 1],
+                                             [1, 1, 0]])
+    graph = sgtl.graph.from_edgelist("data/test1.edgelist")
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adj_mat)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+
+    expected_adj_mat = sp.sparse.csr_matrix([[0, 0.5, 0.5],
+                                             [0.5, 0, 1],
+                                             [0.5, 1, 0]])
+    graph = sgtl.graph.from_edgelist("data/test2.edgelist")
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adj_mat)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+
+    expected_adj_mat = sp.sparse.csr_matrix([[0, 1, 0.5],
+                                             [1, 0, 1],
+                                             [0.5, 1, 0]])
+    graph = sgtl.graph.from_edgelist("data/test3.edgelist", comment='/')
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adj_mat)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+
+    expected_adj_mat = sp.sparse.csr_matrix([[0, 1, 0],
+                                             [0, 0, 1],
+                                             [0.5, 0, 0]])
+    graph = sgtl.graph.from_edgelist("data/test4.edgelist", num_vertices=3, directed=True)
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adj_mat)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0

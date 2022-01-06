@@ -408,7 +408,8 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
     Each line looks like
         id1 id2 <weight>
     where id1 and id2 are the vertex indices of the given edge, and an optional weight is given as a floating point
-    number. The file may also contain comment lines.
+    number. If any edge has a specified weight, then you must specify the weight for every edge. That is, every line
+    in the edgelist must contain the same number of elements (either 2 or 3). The file may also contain comment lines.
 
     By default, the elements on a given line are assumed to be separated by spaces, and comments should begin with a
     '#' character. These defaults can be changed by passing additional key-word arguments which will be passed to
@@ -437,7 +438,7 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
     """
     # Set the default values of the parameters
     if 'sep' not in kwargs:
-        kwargs['sep'] = ' '
+        kwargs['sep'] = '\s+'
     if 'comment' not in kwargs:
         kwargs['comment'] = '#'
     if 'header' not in kwargs:
@@ -451,11 +452,8 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
     edgelist_data = pd.read_csv(filename, **kwargs)
     for edge_row in edgelist_data.iterrows():
         # Get the vertex indices from the edgelist file
-        v1 = edge_row[1][0]
-        v2 = edge_row[1][1]
-
-        if not isinstance(v1, np.integer) or not isinstance(v2, np.integer):
-            raise TypeError("Vertex indices must be given as integers in the edgelist file.")
+        v1 = int(edge_row[1][0])
+        v2 = int(edge_row[1][1])
 
         # Check whether the weight of the edge is specified
         if len(edge_row[1]) > 2:
