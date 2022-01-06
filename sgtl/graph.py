@@ -486,3 +486,17 @@ def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) ->
 
     # Construct the graph object and return it
     return Graph(adj_mat)
+
+
+def to_edgelist(graph: Graph, filename: str):
+    """
+    Save the given graph object as an edgelist file.
+
+    :param graph: the graph to be saved.
+    :param filename: the edgelist filename.
+    """
+    with open(filename, 'w') as fout:
+        # Iterate through every edge in the graph, and add the edge to the edgelist.
+        adj_mat = graph.adjacency_matrix().tocoo()
+        for v1, v2, weight in zip(adj_mat.row, adj_mat.col, adj_mat.data):
+            fout.write(f"{v1} {v2} {weight}\n")
