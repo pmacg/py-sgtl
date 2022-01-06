@@ -17,5 +17,5 @@ Contents
    :maxdepth: 1
 
    getting-started
-   api
+   reference
    changelog
