@@ -130,3 +130,6 @@ dmypy.json
 
 # Ignore pycharm files
 .idea/
+
+# Ignore temporary test files
+tests/data/temp.edgelist

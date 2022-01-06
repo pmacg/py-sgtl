@@ -6,3 +6,4 @@ numpy
 pylint
 networkx
 matplotlib
+pandas
