@@ -364,7 +364,7 @@ def path_graph(number_of_vertices: int) -> Graph:
     return Graph(adj_mat)
 
 
-def knn_graph(data: np.ndarray, k: int):
+def knn_graph(data, k: int):
     """
     Construct the k-nearest neighbours graph from the given data.
 
@@ -372,6 +372,8 @@ def knn_graph(data: np.ndarray, k: int):
     have ``n`` vertices. Each vertex will be connected to the ``k`` vertices which are closest to it in the dataset.
     Notice that this does **not** necessarily result in a ``k``-regular graph since neighbours may or may not be
     mutually within the ``k`` nearest.
+
+    The data should be either a dense numpy array or a sparse scipy matrix.
 
     The graph will have at most n * k edges.
 
@@ -390,8 +392,8 @@ def knn_graph(data: np.ndarray, k: int):
     _, neighbours = NearestNeighbors(n_neighbors=(k+1)).fit(data).kneighbors(data)
 
     # Now, let's construct the adjacency matrix of the graph iteratively
-    adj_mat = scipy.sparse.lil_matrix((len(data), len(data)))
-    for vertex in range(len(data)):
+    adj_mat = scipy.sparse.lil_matrix((data.shape[0], data.shape[0]))
+    for vertex in range(data.shape[0]):
         # Get the k nearest neighbours of this vertex
         for neighbour in neighbours[vertex][1:]:
             adj_mat[vertex, neighbour] = 1

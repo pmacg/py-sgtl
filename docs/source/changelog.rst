@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+**Fixed**
+
+* `Issue #39 <https://github.com/pmacg/py-sgtl/issues/39>`_ - KNN graph construction should work with sparse data matrices.
+
 0.4.2 - 2022-01-06
 ------------------
 
