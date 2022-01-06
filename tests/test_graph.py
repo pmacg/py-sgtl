@@ -372,7 +372,6 @@ def test_knn_graph():
     assert graph.number_of_vertices() == 7
 
 
-
 def test_edgelist():
     ##########
     # TEST 1 #
