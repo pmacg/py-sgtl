@@ -433,11 +433,12 @@ def rbf_graph(data, variance=1, threshold=0.1) -> Graph:
     adj_mat = scipy.sparse.lil_matrix((data.shape[0], data.shape[0]))
     for vertex in range(data.shape[0]):
         # Get the neighbours of this vertex
-        for i, neighbour in enumerate(neighbours[vertex][1:]):
-            distance = distances[vertex][1+i]
-            weight = math.exp(-distance / (2 * variance))
-            adj_mat[vertex, neighbour] = weight
-            adj_mat[neighbour, vertex] = weight
+        for i, neighbour in enumerate(neighbours[vertex]):
+            if neighbour != vertex:
+                distance = distances[vertex][i]
+                weight = math.exp(- (distance**2) / (2 * variance))
+                adj_mat[vertex, neighbour] = weight
+                adj_mat[neighbour, vertex] = weight
 
     return Graph(adj_mat)
 
