@@ -19,6 +19,7 @@
       from_edgelist
       knn_graph
       path_graph
+      rbf_graph
       star_graph
       to_edgelist
    

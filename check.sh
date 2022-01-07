@@ -2,9 +2,9 @@
 echo "|----------------|"
 echo "| Running pytest |"
 echo "|----------------|"
-cd tests
+cd tests || exit
 python3 -m pytest || exit
-cd ..
+cd .. || exit
 echo ""
 echo ""
 
@@ -17,23 +17,14 @@ echo ""
 echo ""
 
 # Re-build all of the documentation
-echo "|---------------|"
-echo "| Building docs |"
-echo "|---------------|"
-cd docs || exit
-make clean
-rm source/generated/*
-make html || exit
-echo ""
-echo ""
+./build_docs.sh
 
 # Run the doc tests
 echo "|-----------------|"
 echo "| Running doctest |"
 echo "|-----------------|"
+cd docs || exit
 make doctest || exit
-echo ""
-echo ""
-
-# Return to the starting directory
 cd .. || exit
+echo ""
+echo ""
