@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+**Fixed**
+
+* `Issue #41 <https://github.com/pmacg/py-sgtl/issues/41>`_ - construct graph using gaussian kernel function with threshold.
+
 0.4.3 - 2022-01-06
 ------------------
 

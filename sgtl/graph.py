@@ -402,6 +402,47 @@ def knn_graph(data, k: int):
     return Graph(adj_mat)
 
 
+def rbf_graph(data, variance=1, threshold=0.1) -> Graph:
+    """
+    Construct a graph from the given data using a radial basis function.
+    The weight of the edge between each pair of data points is given by the Gaussian kernel function
+
+    .. math::
+        k(x_i, x_j) = \\exp\\left( - \\frac{||x_i - x_j||^2}{2 \\sigma^2} \\right)
+
+    where :math:`\\sigma^2` is the variance of the kernel and defaults to 1. Any weights less than the specified
+    threshold (default :math:`0.1`) are discarded and no edge is added to the graph.
+
+    :param data: a sparse matrix with dimension :math:`(n, d)` containing the raw data
+    :param variance: the variance of the gaussian kernel to be used
+    :param threshold: the threshold under which to ignore the weights of an edge. Set to 0 to keep all edges.
+    :return: an `sgtl.Graph` object
+    """
+    # Get the maximum distance which corresponds to the threshold specified.
+    if threshold <= 0:
+        # Handle the case when threshold is equal to 0 - need to create a fully connected graph.
+        max_distance = float('inf')
+    else:
+        max_distance = math.sqrt(-2 * variance * math.log(threshold))
+
+    # Create the nearest neighbours for each vertex using sklearn - create a data structure with all neighbours
+    # which are close enough to be above the given threshold.
+    distances, neighbours = NearestNeighbors(radius=max_distance).fit(data).radius_neighbors(data)
+
+    # Now, let's construct the adjacency matrix of the graph iteratively
+    adj_mat = scipy.sparse.lil_matrix((data.shape[0], data.shape[0]))
+    for vertex in range(data.shape[0]):
+        # Get the neighbours of this vertex
+        for i, neighbour in enumerate(neighbours[vertex]):
+            if neighbour != vertex:
+                distance = distances[vertex][i]
+                weight = math.exp(- (distance**2) / (2 * variance))
+                adj_mat[vertex, neighbour] = weight
+                adj_mat[neighbour, vertex] = weight
+
+    return Graph(adj_mat)
+
+
 def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) -> Graph:
     """
     Construct an ``sgtl.Graph`` object from an edgelist file.

@@ -372,6 +372,43 @@ def test_knn_graph():
     assert graph.number_of_vertices() == 7
 
 
+def test_rbf_graph():
+    # Let's construct some data where we can calculate the knn graph by hand.
+    raw_data = np.asarray([[1, 1], [4, 1], [1, 2], [2, 2], [2, 3]])
+    expected_adj_mat = sp.sparse.lil_matrix([[0,              0, math.exp(-1/2), math.exp(-1),   0],
+                                             [0,              0, 0,              0,              0],
+                                             [math.exp(-1/2), 0, 0,              math.exp(-1/2), math.exp(-1)],
+                                             [math.exp(-1),   0, math.exp(-1/2), 0,              math.exp(-1/2)],
+                                             [0,              0, math.exp(-1),   math.exp(-1/2), 0]])
+    graph = sgtl.graph.rbf_graph(raw_data)
+
+    # Check that every element in the adjacency matrix is close to expected
+    assert graph.number_of_vertices() == expected_adj_mat.shape[0]
+    for i in range(expected_adj_mat.shape[0]):
+        for j in range(expected_adj_mat.shape[0]):
+            assert graph.adjacency_matrix()[i, j] == pytest.approx(expected_adj_mat[i, j])
+
+    # Now, try a different threshold
+    expected_adj_mat[0, 4] = math.exp(-5/2)
+    expected_adj_mat[4, 0] = math.exp(-5/2)
+    expected_adj_mat[1, 3] = math.exp(-5/2)
+    expected_adj_mat[3, 1] = math.exp(-5/2)
+    graph = sgtl.graph.rbf_graph(raw_data, threshold=0.08)
+    assert graph.number_of_vertices() == expected_adj_mat.shape[0]
+    for i in range(expected_adj_mat.shape[0]):
+        for j in range(expected_adj_mat.shape[0]):
+            assert graph.adjacency_matrix()[i, j] == pytest.approx(expected_adj_mat[i, j])
+
+    # Finally, try a different value of sigma.
+    new_variance = 1 / 2
+    expected_adj_mat = expected_adj_mat.power(2)
+    graph = sgtl.graph.rbf_graph(raw_data, threshold=0.006, variance=new_variance)
+    assert graph.number_of_vertices() == expected_adj_mat.shape[0]
+    for i in range(expected_adj_mat.shape[0]):
+        for j in range(expected_adj_mat.shape[0]):
+            assert graph.adjacency_matrix()[i, j] == pytest.approx(expected_adj_mat[i, j])
+
+
 def test_edgelist():
     ##########
     # TEST 1 #
