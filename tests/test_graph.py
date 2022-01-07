@@ -375,7 +375,7 @@ def test_knn_graph():
 def test_rbf_graph():
     # Let's construct some data where we can calculate the knn graph by hand.
     raw_data = np.asarray([[1, 1], [4, 1], [1, 2], [2, 2], [2, 3]])
-    expected_adj_mat = sp.sparse.csr_matrix([[0,              0, math.exp(-1/2), math.exp(-1),   0],
+    expected_adj_mat = sp.sparse.lil_matrix([[0,              0, math.exp(-1/2), math.exp(-1),   0],
                                              [0,              0, 0,              0,              0],
                                              [math.exp(-1/2), 0, 0,              math.exp(-1/2), math.exp(-1)],
                                              [math.exp(-1),   0, math.exp(-1/2), 0,              math.exp(-1/2)],
