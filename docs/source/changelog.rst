@@ -1,35 +1,21 @@
 Changelog
 =========
 
-Unreleased
-----------
-
-**Fixed**
-
-* `Issue #41 <https://github.com/pmacg/py-sgtl/issues/41>`_ - construct graph using gaussian kernel function with threshold.
-
-0.4.3 - 2022-01-06
+0.4.4 - 2022-01-07
 ------------------
-
-**Fixed**
-
-* `Issue #39 <https://github.com/pmacg/py-sgtl/issues/39>`_ - KNN graph construction should work with sparse data matrices.
-
-0.4.2 - 2022-01-06
-------------------
+For brevity, the log below includes changes made in versions ``0.4.1``, ``0.4.2``, ``0.4.3``, and ``0.4.4``.
 
 **Added**
 
 * `Issue #25 <https://github.com/pmacg/py-sgtl/issues/25>`_ - add methods for reading and writing edgelist files
-
-0.4.1 - 2022-01-05
-------------------
-
-**Added**
-
 * Added ``Graph.adjacency_matrix()`` method.
 * `Issue #29 <https://github.com/pmacg/py-sgtl/issues/29>`_ - add spectrum methods for adjacency and laplacian matrices.
 * `Issue #35 <https://github.com/pmacg/py-sgtl/issues/35>`_ - add method to construct k nearest neighbour graph.
+* `Issue #41 <https://github.com/pmacg/py-sgtl/issues/41>`_ - construct graph using gaussian kernel function with threshold.
+
+**Fixed**
+
+* `Issue #39 <https://github.com/pmacg/py-sgtl/issues/39>`_ - KNN graph construction should work with sparse data matrices.
 
 0.4 - 2021-12-14
 ----------------
