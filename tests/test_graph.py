@@ -521,3 +521,31 @@ def test_tensor_product():
     adj_mat_diff = new_graph.adjacency_matrix() - expected_adj_mat
     adj_mat_diff.eliminate_zeros()
     assert adj_mat_diff.nnz == 0
+
+
+def test_add():
+    # Test adding two graphs together
+    g1 = sgtl.graph.cycle_graph(5)
+    g2 = sgtl.graph.path_graph(5)
+    g3 = g1 + g2
+
+    expected_adj_mat = sp.sparse.csr_matrix([[0, 2, 0, 0, 1],
+                                             [2, 0, 2, 0, 0],
+                                             [0, 2, 0, 2, 0],
+                                             [0, 0, 2, 0, 2],
+                                             [1, 0, 0, 2, 0]])
+    adj_mat_diff = g3.adjacency_matrix() - expected_adj_mat
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+
+    # Try adding tha identity matrix
+    g3 = g1 + sp.sparse.eye(5)
+    expected_adj_mat = sp.sparse.csr_matrix([[1, 1, 0, 0, 1],
+                                             [1, 1, 1, 0, 0],
+                                             [0, 1, 1, 1, 0],
+                                             [0, 0, 1, 1, 1],
+                                             [1, 0, 0, 1, 1]])
+    adj_mat_diff = g3.adjacency_matrix() - expected_adj_mat
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+
