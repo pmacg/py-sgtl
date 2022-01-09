@@ -30,6 +30,7 @@ sgtl.graph.Graph
       ~Graph.number_of_edges
       ~Graph.number_of_vertices
       ~Graph.random_walk_laplacian_matrix
+      ~Graph.tensor_product
       ~Graph.to_networkx
       ~Graph.total_volume
       ~Graph.volume

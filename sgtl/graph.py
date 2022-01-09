@@ -246,6 +246,61 @@ class Graph:
                 if vert >= self.number_of_vertices():
                     raise IndexError("Input vertex set includes indices larger than the number of vertices.")
 
+    def tensor_product(self, other_graph):
+        """
+        Construct the tensor-product graph of this graph with another one.
+
+        The tensor product graph :math:`G_1 \\otimes G_2` has vertex set
+
+        .. math::
+            V_3 = V_1 \\times V_2
+
+        where :math:`V_1` and :math:`V_2` are the vertex sets of the two input graphs. Then, the edge set is
+
+        .. math::
+            E_3 = \\left\\{ (v_{ab}, v_{ij}) : (a, i) \\in E_1 \\land (b, j) \\in E_2 \\right\\}.
+
+        Notice that the tensor product is **not** symmetrical: ``graph1.tensor_product(graph2)`` is not the same as
+        ``graph2.tensor_product(graph1)``.
+
+        :param other_graph: The other ``sgtl.Graph`` object to combine with this one.
+        :returns: A new graph object which is the tensor product of the two input graphs.
+
+        :Example:
+
+            >>> import sgtl.graph
+            >>> graph1 = sgtl.graph.complete_graph(4)
+            >>> graph2 = sgtl.graph.path_graph(3)
+            >>> graph1.tensor_product(graph2).adjacency_matrix().toarray()
+            array([[0., 0., 0., 0., 1., 0., 0., 1., 0., 0., 1., 0.],
+                   [0., 0., 0., 1., 0., 1., 1., 0., 1., 1., 0., 1.],
+                   [0., 0., 0., 0., 1., 0., 0., 1., 0., 0., 1., 0.],
+                   [0., 1., 0., 0., 0., 0., 0., 1., 0., 0., 1., 0.],
+                   [1., 0., 1., 0., 0., 0., 1., 0., 1., 1., 0., 1.],
+                   [0., 1., 0., 0., 0., 0., 0., 1., 0., 0., 1., 0.],
+                   [0., 1., 0., 0., 1., 0., 0., 0., 0., 0., 1., 0.],
+                   [1., 0., 1., 1., 0., 1., 0., 0., 0., 1., 0., 1.],
+                   [0., 1., 0., 0., 1., 0., 0., 0., 0., 0., 1., 0.],
+                   [0., 1., 0., 0., 1., 0., 0., 1., 0., 0., 0., 0.],
+                   [1., 0., 1., 1., 0., 1., 1., 0., 1., 0., 0., 0.],
+                   [0., 1., 0., 0., 1., 0., 0., 1., 0., 0., 0., 0.]])
+            >>> graph2.tensor_product(graph1).adjacency_matrix().toarray()
+            array([[0., 0., 0., 0., 0., 1., 1., 1., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 1., 0., 1., 1., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 1., 1., 0., 1., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 1., 1., 1., 0., 0., 0., 0., 0.],
+                   [0., 1., 1., 1., 0., 0., 0., 0., 0., 1., 1., 1.],
+                   [1., 0., 1., 1., 0., 0., 0., 0., 1., 0., 1., 1.],
+                   [1., 1., 0., 1., 0., 0., 0., 0., 1., 1., 0., 1.],
+                   [1., 1., 1., 0., 0., 0., 0., 0., 1., 1., 1., 0.],
+                   [0., 0., 0., 0., 0., 1., 1., 1., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 1., 0., 1., 1., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 1., 1., 0., 1., 0., 0., 0., 0.],
+                   [0., 0., 0., 0., 1., 1., 1., 0., 0., 0., 0., 0.]])
+
+        """
+        return Graph(scipy.sparse.kron(self.adjacency_matrix(), other_graph.adjacency_matrix()))
+
 
 def complete_graph(number_of_vertices: int) -> Graph:
     """
