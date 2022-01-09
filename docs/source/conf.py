@@ -20,7 +20,7 @@ sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 # -- Project information -----------------------------------------------------
 
 project = 'SGTL'
-copyright = '2021, Peter Macgregor'
+copyright = '2022, Peter Macgregor'
 author = 'Peter Macgregor'
 
 # The full version, including alpha/beta/rc tags
