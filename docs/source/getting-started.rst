@@ -42,29 +42,27 @@ For example:
            [0., 0., 1., 0., 1.],
            [1., 0., 0., 1., 0.]])
 
-You can also generate some graphs with standard shapes.
-For example:
+Or, you can load a more complex graph from an edgelist file like this.
 
     >>> import sgtl.graph
-    >>> graph = sgtl.graph.cycle_graph(5)
-    >>> graph.adjacency_matrix().toarray()
-    array([[0., 1., 0., 0., 1.],
-           [1., 0., 1., 0., 0.],
-           [0., 1., 0., 1., 0.],
-           [0., 0., 1., 0., 1.],
-           [1., 0., 0., 1., 0.]])
+    >>> graph = sgtl.graph.from_edgelist("my_graph.edgelist")
 
-You can also generate some graphs with standard shapes.
-For example:
+See the documentation of the :any:`sgtl.graph.from_edgelist` method for more information on the
+required format of the edgelist file.
+
+Viewing the spectrum of a graph
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Investigating the spectrum of a graph is very simple. For example, you could visualise
+the spectrum of the tensor product of two graphs like this.
+
+.. code-block:: python
 
     >>> import sgtl.graph
-    >>> graph = sgtl.graph.cycle_graph(5)
-    >>> graph.adjacency_matrix().toarray()
-    array([[0., 1., 0., 0., 1.],
-           [1., 0., 1., 0., 0.],
-           [0., 1., 0., 1., 0.],
-           [0., 0., 1., 0., 1.],
-           [1., 0., 0., 1., 0.]])
+    >>> import sgtl.spectrum
+    >>> g1 = sgtl.graph.cycle_graph(5)
+    >>> g2 = sgtl.graph.complete_graph(5)
+    >>> g3 = g1.tensor_product(g2)
+    >>> spectrum = sgtl.spectrum.normalised_adjacency_spectrum(g3, plot=True)
 
 The stochastic block model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

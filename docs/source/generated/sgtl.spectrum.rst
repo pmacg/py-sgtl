@@ -16,6 +16,7 @@
    
       adjacency_spectrum
       laplacian_spectrum
+      normalised_adjacency_spectrum
       normalised_laplacian_spectrum
    
    
