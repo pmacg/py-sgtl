@@ -208,15 +208,16 @@ def ssbm(n: int, k: int, p: float, q: float, directed=False):
     """
     Generate a graph from the symmetric stochastic block model.
 
-    Generates a graph with n vertices and k clusters. Every cluster will have floor(n/k) vertices. The probability of
-    each edge inside a cluster is given by p. The probability of an edge between two different clusters is q.
+    Generates a graph with n vertices and k clusters. Every cluster will have :math:`\\lfloor n/k \\rfloor` vertices.
+    The probability of each edge inside a cluster is given by :math:`p`. The probability of an edge between two
+    different clusters is :math:`q`.
 
     :param n: The number of vertices in the graph.
     :param k: The number of clusters.
     :param p: The probability of an edge inside a cluster.
     :param q: The probability of an edge between clusters.
     :param directed: Whether to generate a directed graph.
-    :return: The generated graph as an ``sgtl.Graph`` object.
+    :return: The generated graph as an :py:class:`sgtl.graph.Graph` object.
     """
     # We are ok with using the 'n', 'k', 'p', and 'q' variable names for the stochastic block model - these are
     # standard notation for this model.
