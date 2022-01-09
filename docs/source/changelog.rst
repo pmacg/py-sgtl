@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+**Added**
+
+* `Issue #32 <https://github.com/pmacg/py-sgtl/issues/32>`_ - add tensor product method for combining graphs
+
 0.4.4 - 2022-01-07
 ------------------
 For brevity, the log below includes changes made in versions ``0.4.1``, ``0.4.2``, ``0.4.3``, and ``0.4.4``.
