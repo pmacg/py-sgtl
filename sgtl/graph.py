@@ -66,6 +66,23 @@ class Graph:
         """
         return nx.Graph(self.adjacency_matrix())
 
+    def __add__(self, other):
+        """
+        Adding two graphs requires that they have the same number of vertices. the sum of the graphs is simply the graph
+        constructed by adding their adjacency matrices together.
+
+        You can also just add a sparse matrix to the graph directly.
+        """
+        if isinstance(other, scipy.sparse.spmatrix):
+            if other.shape[0] != self.number_of_vertices():
+                raise AssertionError("Graphs must have equal number of vertices.")
+            return Graph(self.adjacency_matrix() + other)
+
+        if other.number_of_vertices() != self.number_of_vertices():
+            raise AssertionError("Graphs must have equal number of vertices.")
+
+        return Graph(self.adjacency_matrix() + other.adjacency_matrix())
+
     def draw(self):
         """
         Plot the graph, by first converting to a networkx graph. This will use the default networkx plotting

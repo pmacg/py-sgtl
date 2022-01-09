@@ -50,6 +50,20 @@ Or, you can load a more complex graph from an edgelist file like this.
 See the documentation of the :any:`sgtl.graph.from_edgelist` method for more information on the
 required format of the edgelist file.
 
+You can also add graphs together, which corresponds to adding
+their adjacency matrices.
+
+    >>> import sgtl.graph
+    >>> g1 = sgtl.graph.cycle_graph(5)
+    >>> g2 = sgtl.graph.path_graph(5)
+    >>> g3 = g1 + g2
+    >>> g3.adjacency_matrix().toarray()
+    array([[0., 2., 0., 0., 1.],
+           [2., 0., 2., 0., 0.],
+           [0., 2., 0., 2., 0.],
+           [0., 0., 2., 0., 2.],
+           [1., 0., 0., 2., 0.]])
+
 Viewing the spectrum of a graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Investigating the spectrum of a graph is very simple. For example, you could visualise

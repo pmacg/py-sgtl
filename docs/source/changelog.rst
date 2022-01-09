@@ -8,6 +8,7 @@ Unreleased
 
 * `Issue #32 <https://github.com/pmacg/py-sgtl/issues/32>`_ - add tensor product method for combining graphs
 * `Issue #27 <https://github.com/pmacg/py-sgtl/issues/27>`_ - add option to plot spectrum of graph
+* `Issue #31 <https://github.com/pmacg/py-sgtl/issues/31>`_ - add graphs together
 
 0.4.4 - 2022-01-07
 ------------------
