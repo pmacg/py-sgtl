@@ -116,6 +116,17 @@ class Graph:
         """
         return self.adj_mat
 
+    def normalised_adjacency_matrix(self):
+        """
+        Return the normalised adjacency matrix of the graph. The normalised adjacency matrix is defined to be
+
+        .. math::
+            \\mathcal{A} = D^{-1/2} A D^{-1/2}
+
+        where :math:`A` is the unnormalised adjacency matrix and :math:`D` is the diagonal degree matrix of the graph.
+        """
+        return self.inverse_sqrt_degree_matrix() @ self.adjacency_matrix() @ self.inverse_sqrt_degree_matrix()
+
     def laplacian_matrix(self):
         """
         Construct the Laplacian matrix of the graph. The Laplacian matrix is defined to be
@@ -498,7 +509,7 @@ def rbf_graph(data, variance=1, threshold=0.1) -> Graph:
     return Graph(adj_mat)
 
 
-def from_edgelist(filename: str, directed=False, num_vertices=None, **kwargs) -> Graph:
+def from_edgelist(filename, directed=False, num_vertices=None, **kwargs) -> Graph:
     """
     Construct an ``sgtl.Graph`` object from an edgelist file.
 
