@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4.6 - 2022-01-11
+------------------
+
+**Fixed**
+
+* `Issue #46 <https://github.com/pmacg/py-sgtl/issues/46>`_ - speed up weight calculation
+
 0.4.5 - 2022-01-09
 ------------------
 
