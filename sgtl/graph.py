@@ -208,7 +208,7 @@ class Graph:
         :return: The weight w(L, R)
         """
         self._check_vert_num(vertex_set_l, vertex_set_r)
-        raw_weight = self.lil_adj_mat[vertex_set_l][:, vertex_set_r].sum()
+        raw_weight = self.lil_adj_mat[vertex_set_l].transpose()[vertex_set_r].sum()
 
         # If the two sets L and R overlap, we will have double counted any edges inside this overlap, save for the
         # self-loops
