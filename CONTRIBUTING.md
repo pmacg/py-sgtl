@@ -3,7 +3,7 @@
 The next release of the library is tracked by the `git` branch `next-release`.
 
 ## Developing an enhancement or bugfix
-Thanks for your interest in contributing to this project. Please follow the following process when contributing.
+Thanks for your interest in contributing to this project. Please follow the following process when contributing. If you have any questions or problems while contributing to this project, please do not hesitate to get in touch either through github or by email.
 
 1. Ensure there is an issue on the Github project for the development you would like to do. Feel free to create an issue describing the change you will make.
 2. Fork the project.
