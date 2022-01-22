@@ -1,5 +1,11 @@
 Changelog
 =========
+0.4.6 - 2022-01-11
+------------------
+
+**Fixed**
+
+* `Issue #30 <https://github.com/pmacg/py-sgtl/issues/30>`_ - Create hypercube graph
 
 0.4.6 - 2022-01-11
 ------------------
