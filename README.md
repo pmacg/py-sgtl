@@ -20,7 +20,7 @@ The full documentation is available [here](https://sgtl.readthedocs.io/en/latest
 
 ## Contributing
 Please feel free to contribute to this project by opening issues, reporting bugs, and submitting
-pull requests.
+pull requests. There is a checklist to follow while developing on this project [here](https://github.com/pmacg/py-sgtl/blob/next-release/CONTRIBUTING.md).
 
 The library is currently maintained by Peter Macgregor (`peter.macgregor@ed.ac.uk`) and you are
 welcome to get in touch with any questions.
