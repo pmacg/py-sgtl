@@ -62,6 +62,29 @@ def test_graph_constructor():
     assert graph.degrees[2] == 4
     assert graph.degrees[4] == 5
 
+def test_hypercube_graph():
+    # Create a hypercube graph
+    d = 3
+    graph = sgtl.graph.hypercube_graph(d)
+    expected_adjacency_matrix = sp.sparse.csr_matrix([[0, 1, 1, 0, 1, 0, 0, 0],
+                                                      [1, 0, 0, 1, 0, 1, 0, 0],
+                                                      [1, 0, 0, 1, 0, 0, 1, 0],
+                                                      [0, 1, 1, 0, 0, 0, 0, 1],
+                                                      [1, 0, 0, 0, 0, 1, 1, 0],
+                                                      [0, 1, 0, 0, 1, 0, 0, 1],
+                                                      [0, 0, 1, 0, 1, 0, 0, 1],
+                                                      [0, 0, 0, 1, 0, 1, 1, 0]])
+    assert graph.number_of_vertices() == 2**d
+    adj_mat_diff = (graph.adjacency_matrix() - expected_adjacency_matrix)
+    adj_mat_diff.eliminate_zeros()
+    assert adj_mat_diff.nnz == 0
+
+    # Make sure we can't do something stupid
+    with pytest.raises(ValueError):
+        _ = sgtl.graph.complete_graph(-10)
+    with pytest.raises(ValueError):
+        _ = sgtl.graph.complete_graph(0)
+
 
 def test_complete_graph():
     # Create a complete graph

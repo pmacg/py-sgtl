@@ -330,6 +330,39 @@ class Graph:
         return Graph(scipy.sparse.kron(self.adjacency_matrix(), other_graph.adjacency_matrix()))
 
 
+def hypercube_graph(d: int) -> Graph:
+    """
+    Construct the hypercube unweighted graph on :math:`2**d` vertices.
+    :param d: Degree of the hypercube graph.
+    :return: The hypercube graph on :math:`2**d` vertices, as a `Graph` object.
+    :raises ValueError: if the degree is not a positive integer.
+    :Example:
+       >>> import sgtl.graph
+       >>> graph = sgtl.graph.hypercube_graph(3)
+       >>> graph.adjacency_matrix().toarray()
+       array([[0., 1., 1., 0., 1., 0., 0., 0.],
+              [1., 0., 0., 1., 0., 1., 0., 0.],
+              [1., 0., 0., 1., 0., 0., 1., 0.],
+              [0., 1., 1., 0., 0., 0., 0., 1.],
+              [1., 0., 0., 0., 0., 1., 1., 0.],
+              [0., 1., 0., 0., 1., 0., 0., 1.],
+              [0., 0., 1., 0., 1., 0., 0., 1.],
+              [0., 0., 0., 1., 0., 1., 1., 0.]])
+    """
+    if d <= 0:
+        raise ValueError("The graph must contain at least one vertex.")
+    number_of_vertices = 2**d
+    # Generate the adjacency matrix
+    adj_mat = scipy.sparse.lil_matrix((number_of_vertices, number_of_vertices))
+    for i in range(0, number_of_vertices):
+        for j in range(i+1, number_of_vertices):
+            for k in range(0, d):
+                if (j ^ i) == (1 << k):
+                    adj_mat[i,j] = 1
+                    adj_mat[j,i] = 1
+    return Graph(adj_mat)
+
+
 def complete_graph(number_of_vertices: int) -> Graph:
     """
     Construct the complete unweighted graph on :math:`n` vertices.
@@ -472,7 +505,7 @@ def knn_graph(data, k: int):
     :return: An ``sgtl.Graph`` object representing the ``k``-nearest neighbour graph of the input.
     """
     # Create the nearest neighbours for each vertex using sklearn
-    _, neighbours = NearestNeighbors(n_neighbors=(k+1)).fit(data).kneighbors(data)
+    _, neighbours = NearestNeighbors(n_neighbors=(k + 1)).fit(data).kneighbors(data)
 
     # Now, let's construct the adjacency matrix of the graph iteratively
     adj_mat = scipy.sparse.lil_matrix((data.shape[0], data.shape[0]))
@@ -519,7 +552,7 @@ def rbf_graph(data, variance=1, threshold=0.1) -> Graph:
         for i, neighbour in enumerate(neighbours[vertex]):
             if neighbour != vertex:
                 distance = distances[vertex][i]
-                weight = math.exp(- (distance**2) / (2 * variance))
+                weight = math.exp(- (distance ** 2) / (2 * variance))
                 adj_mat[vertex, neighbour] = weight
                 adj_mat[neighbour, vertex] = weight
 
@@ -598,7 +631,7 @@ def from_edgelist(filename, directed=False, num_vertices=None, **kwargs) -> Grap
             maximum_node_index = max(vertex1, vertex2)
 
             # Update the shape of the lil matrix
-            adj_mat._shape = (maximum_node_index + 1, maximum_node_index + 1)       # pylint: disable=protected-access
+            adj_mat._shape = (maximum_node_index + 1, maximum_node_index + 1)  # pylint: disable=protected-access
 
             # Add rows to the data elements of the lil matrix
             for i in range(old_maximum_node_index + 1, maximum_node_index + 1):
