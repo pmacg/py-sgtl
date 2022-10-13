@@ -3,6 +3,8 @@
 [![Documentation Status](https://readthedocs.org/projects/sgtl/badge/?version=latest)](https://sgtl.readthedocs.io/en/latest/)
 [![tests](https://github.com/pmacg/py-sgtl/actions/workflows/run-checks.yml/badge.svg)](https://github.com/pmacg/py-sgtl/actions/workflows/run-checks.yml)
 
+**The SGTL library is deprecated and will not be updated. The functionality currently available in SGTL will soon be included in the [STAG](https://github.com/pmacg/stag) library and the corresponding [python package](https://github.com/pmacg/stagpy).**
+
 SGTL is a python library of spectral graph theory methods. The library is still very new and so
 there are many features and algorithms missing.
 
