@@ -1,5 +1,5 @@
 scipy
-sklearn
+scikit-learn
 pytest
 furo
 numpy
