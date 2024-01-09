@@ -4,6 +4,6 @@ pytest
 furo
 numpy
 pylint
-networkx
+networkx<3.0
 matplotlib
 pandas

@@ -3,7 +3,7 @@ echo "|----------------|"
 echo "| Running pytest |"
 echo "|----------------|"
 cd tests || exit
-python3 -m pytest || exit
+python -m pytest || exit
 cd .. || exit
 echo ""
 echo ""

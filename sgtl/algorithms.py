@@ -34,7 +34,7 @@ def _sweep_set(graph: sgtl.Graph, vector: List[float]) -> Tuple[Set[int], Set[in
     vector = degree_matrix.power(-(1 / 2)).dot(vector)
 
     # First, sort the vertices based on their value in the given vector
-    sorted_vertices = [i for i, _ in sorted(enumerate(vector), key=(lambda y: y[1]))]
+    sorted_vertices = [i for i, _ in sorted(enumerate(vector), key=lambda y: y[1])]
 
     # Keep track of which edges to add/subtract from the cut each time
     edges_to_add = np.ones(num_vertices)

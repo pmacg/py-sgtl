@@ -40,7 +40,7 @@ def spectral_clustering(graph: sgtl.Graph, num_clusters: int, num_eigenvectors=N
     _, eigenvectors = scipy.sparse.linalg.eigsh(laplacian_matrix, num_eigenvectors, which='SM')
 
     # Perform k-means on the eigenvectors to find the clusters
-    labels = KMeans(n_clusters=num_clusters).fit_predict(eigenvectors)
+    labels = KMeans(n_clusters=num_clusters, n_init=10).fit_predict(eigenvectors)
 
     # Split the clusters.
     clusters = [[] for _ in range(num_clusters)]

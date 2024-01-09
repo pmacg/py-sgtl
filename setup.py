@@ -15,7 +15,7 @@ setup(
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     packages=find_packages(),
-    install_requires=["numpy", "scipy", "scikit-learn"],
+    install_requires=["numpy", "scipy", "scikit-learn", "networkx<3.0", "matplotlib", "pandas"],
     long_description_content_type='text/markdown',
 
     keywords=['python', 'spectral', 'graph', 'algorithms', 'clustering', 'cheeger'],

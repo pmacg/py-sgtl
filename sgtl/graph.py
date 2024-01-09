@@ -185,7 +185,7 @@ class Graph:
         :return: The volume of vertex_set
         """
         self._check_vert_num(vertex_set)
-        return sum([self.degrees[v] for v in vertex_set])
+        return sum(self.degrees[v] for v in vertex_set)
 
     def weight(self,
                vertex_set_l: List[int],
@@ -214,13 +214,13 @@ class Graph:
         # self-loops
         if sets_are_equal:
             weight_to_remove = raw_weight / 2
-            weight_to_remove -= sum([self.adjacency_matrix()[i, i] for i in vertex_set_l]) / 2
+            weight_to_remove -= sum(self.adjacency_matrix()[i, i] for i in vertex_set_l) / 2
         elif not check_for_overlap:
             weight_to_remove = 0
         else:
             overlap = set.intersection(set(vertex_set_l), set(vertex_set_r))
             weight_to_remove = self.lil_adj_mat[list(overlap)][:, list(overlap)].sum() / 2
-            weight_to_remove -= sum([self.adjacency_matrix()[i, i] for i in overlap]) / 2
+            weight_to_remove -= sum(self.adjacency_matrix()[i, i] for i in overlap) / 2
 
         # Return the corrected weight
         return raw_weight - weight_to_remove
@@ -472,7 +472,7 @@ def knn_graph(data, k: int):
     :return: An ``sgtl.Graph`` object representing the ``k``-nearest neighbour graph of the input.
     """
     # Create the nearest neighbours for each vertex using sklearn
-    _, neighbours = NearestNeighbors(n_neighbors=(k+1)).fit(data).kneighbors(data)
+    _, neighbours = NearestNeighbors(n_neighbors=k+1).fit(data).kneighbors(data)
 
     # Now, let's construct the adjacency matrix of the graph iteratively
     adj_mat = scipy.sparse.lil_matrix((data.shape[0], data.shape[0]))
