@@ -1,9 +1,9 @@
 scipy
-sklearn
+scikit-learn
 pytest
 furo
 numpy
 pylint
-networkx
+networkx<3.0
 matplotlib
 pandas

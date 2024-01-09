@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+**Fixed**
+
+* Update sklearn dependency to scikit-learn
+
 0.4.6 - 2022-01-11
 ------------------
 
